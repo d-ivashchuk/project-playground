@@ -9,7 +9,6 @@ import {
 } from '@ts-rest/nest';
 import { PostService } from './post.service';
 import { PrismaService } from './prisma.service';
-import { Prisma } from '@prisma/client';
 
 const c = nestControllerContract(apiBlog);
 type RequestShapes = NestRequestShapes<typeof c>;
