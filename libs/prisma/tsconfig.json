@@ -1,0 +1,40 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "lib": ["dom", "ESNext"],
+    // "declaration": true,
+    // "declarationMap": true,
+    // "sourceMap": true,
+    // "module": "CommonJS",
+    "target": "ESNext",
+    // "moduleResolution": "node",
+    // "isolatedModules": false,
+    // "esModuleInterop": true,
+    // "skipLibCheck": true,
+    // "allowJs": false,
+    // "resolveJsonModule": true,
+    // "removeComments": true,
+    // "forceConsistentCasingInFileNames": true,
+    // "inlineSources": false,
+    // "allowSyntheticDefaultImports": true,
+    "strict": true
+    // "strictNullChecks": true,
+    // "strictPropertyInitialization": true,
+    // "noImplicitAny": true,
+    // "noImplicitReturns": true,
+    // "noFallthroughCasesInSwitch": true,
+    // "noPropertyAccessFromIndexSignature": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    // "useDefineForClassFields": true,
+    // "useUnknownInCatchVariables": true
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    }
+  ]
+}
