@@ -2,7 +2,7 @@ import {
   PostCreateInputSchema,
   PostSchema,
   PostUpdateInputSchema,
-} from '@no-code/prisma';
+} from './prisma-generated-zod';
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 
