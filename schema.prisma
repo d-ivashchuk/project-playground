@@ -27,3 +27,56 @@ model Post {
   image                        String?
   importantFieldWithoutDefault String
 }
+
+model Job {
+  id                     Int      @id @default(autoincrement())
+  name                   String
+  schedule               String // Store cron expression for the job schedule
+  waitBeforeScreenshot   Int?
+  actionBeforeScreenshot String?
+  differenceThreshold    Float?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  runs                   Run[]
+  jobUrls                JobUrl[]
+}
+
+model Run {
+  id        Int       @id @default(autoincrement())
+  jobId     Int
+  job       Job       @relation(fields: [jobId], references: [id])
+  status    String // E.g. "running", "completed", "failed"
+  startedAt DateTime
+  endedAt   DateTime?
+  results   Result[]
+}
+
+model Result {
+  id            Int      @id @default(autoincrement())
+  runId         Int
+  run           Run      @relation(fields: [runId], references: [id])
+  url           String
+  screenshotUrl String
+  diffUrl       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Url {
+  id                     Int      @id @default(autoincrement())
+  url                    String
+  jobUrls                JobUrl[]
+  waitBeforeScreenshot   Int?
+  actionBeforeScreenshot String?
+  differenceThreshold    Float?
+  baselineScreenshotUrl  String?
+}
+
+model JobUrl {
+  jobId Int
+  urlId Int
+  job   Job @relation(fields: [jobId], references: [id])
+  url   Url @relation(fields: [urlId], references: [id])
+
+  @@id([jobId, urlId])
+}

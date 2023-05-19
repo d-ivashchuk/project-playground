@@ -4,9 +4,10 @@ import { PostController } from './post.controller';
 
 import { PrismaService } from './prisma.service';
 import { PostService } from './post.service';
+import { ScheduleModule } from '../schedule/schedule.module';
 
 @Module({
-  imports: [],
+  imports: [ScheduleModule],
   controllers: [PostController],
   providers: [PrismaService, PostService],
 })
