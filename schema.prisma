@@ -28,8 +28,18 @@ model Post {
   importantFieldWithoutDefault String
 }
 
+model Project {
+  id        String   @unique @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  jobs      Job[]
+}
+
 model Job {
-  id                     Int      @id @default(autoincrement())
+  id String @id @default(cuid())
+
+  userId                 String
   name                   String
   schedule               String // Store cron expression for the job schedule
   waitBeforeScreenshot   Int?
@@ -37,13 +47,16 @@ model Job {
   differenceThreshold    Float?
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
+  url                    String
   runs                   Run[]
-  jobUrls                JobUrl[]
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
 }
 
 model Run {
   id        Int       @id @default(autoincrement())
-  jobId     Int
+  jobId     String
   job       Job       @relation(fields: [jobId], references: [id])
   status    String // E.g. "running", "completed", "failed"
   startedAt DateTime
@@ -60,23 +73,4 @@ model Result {
   diffUrl       String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-}
-
-model Url {
-  id                     Int      @id @default(autoincrement())
-  url                    String
-  jobUrls                JobUrl[]
-  waitBeforeScreenshot   Int?
-  actionBeforeScreenshot String?
-  differenceThreshold    Float?
-  baselineScreenshotUrl  String?
-}
-
-model JobUrl {
-  jobId Int
-  urlId Int
-  job   Job @relation(fields: [jobId], references: [id])
-  url   Url @relation(fields: [urlId], references: [id])
-
-  @@id([jobId, urlId])
 }

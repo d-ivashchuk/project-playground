@@ -1,33 +1,24 @@
 'use client';
 
 import { UserButton } from '@clerk/nextjs';
-import { Test } from './test-component';
+
 import {
   AppShell,
   Navbar,
   Header,
-  Aside,
   Burger,
   Footer,
   MediaQuery,
   useMantineTheme,
   Text,
   Group,
-  useMantineColorScheme,
   ThemeIcon,
   UnstyledButton,
 } from '@mantine/core';
-import { ReactElement, ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 
-import {
-  FaPlusCircle,
-  FaPlusSquare,
-  FaClock,
-  FaUserClock,
-  FaCheckSquare,
-  FaHammer,
-} from 'react-icons/fa';
-import { IconType } from 'react-icons/lib';
+import { FaClock, FaCheckSquare, FaHammer, FaFolder } from 'react-icons/fa';
+
 import Jobs from '../comoponents/jobs';
 
 export default function Page() {
@@ -56,6 +47,7 @@ export default function Page() {
           >
             <Group spacing={1} px={20}>
               <NavbarItem icon={<FaClock />} label="Jobs" color="green" />
+              <NavbarItem icon={<FaFolder />} label="Projects" color="yellow" />
               <NavbarItem
                 icon={<FaCheckSquare />}
                 label="Runs"

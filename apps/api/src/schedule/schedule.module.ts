@@ -2,6 +2,8 @@ import { Module, Global } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { JobProcessor } from './job.processor';
 import { ScheduleService } from './schedule.service';
+import { ScheduleController } from './schedule.controller';
+import { PrismaService } from '../app/prisma.service';
 // ... other imports
 
 @Global()
@@ -17,7 +19,8 @@ import { ScheduleService } from './schedule.service';
       name: 'jobQueue',
     }),
   ],
-  providers: [JobProcessor, ScheduleService],
+  providers: [PrismaService, JobProcessor, ScheduleService],
+  controllers: [ScheduleController],
   exports: [ScheduleService],
 })
 export class ScheduleModule {}

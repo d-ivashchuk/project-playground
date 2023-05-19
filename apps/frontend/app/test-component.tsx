@@ -26,9 +26,9 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export function Test() {
-  const postsQuery = client.fetchAllPosts.useQuery(['posts']);
+  const postsQuery = client.apiBlog.fetchAllPosts.useQuery(['posts']);
   const queryClient = useQueryClient();
-  const createPostMutation = client.createPost.useMutation();
+  const createPostMutation = client.apiBlog.createPost.useMutation();
 
   const [title, setTitle] = useState('');
 

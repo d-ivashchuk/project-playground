@@ -1,11 +1,14 @@
 'use client';
 import { initQueryClient } from '@ts-rest/react-query';
-import { apiBlog } from '@no-code/contracts';
+import { apiBlog, apiJobs } from '@no-code/contracts';
 
-export const client = initQueryClient(apiBlog, {
-  baseUrl: process.env.NEXT_PUBLIC_API_URL as string,
-  baseHeaders: {},
-});
+export const client = initQueryClient(
+  { apiBlog, apiJobs },
+  {
+    baseUrl: process.env.NEXT_PUBLIC_API_URL as string,
+    baseHeaders: {},
+  }
+);
 
 import React from 'react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
