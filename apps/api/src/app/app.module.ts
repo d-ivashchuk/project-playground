@@ -5,10 +5,12 @@ import { PostController } from './post.controller';
 import { PrismaService } from './prisma.service';
 import { PostService } from './post.service';
 import { ScheduleModule } from '../schedule/schedule.module';
+import { VisualModule } from '../visual/visual.module';
 
 @Module({
   imports: [
     ScheduleModule,
+    VisualModule,
     LoggerModule.forRootAsync({
       useFactory: async () => {
         return {
