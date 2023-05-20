@@ -81,6 +81,14 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
       },
     });
 
+    if (response.id) {
+      this.logger.log(`Deleting job from queue: ${response.id}`);
+      await this.scheduleService.deleteJob({
+        jobId: response.id,
+        schedule: response.schedule,
+      });
+    }
+
     return { status: 201 as const, body: response };
   }
 }

@@ -6,7 +6,7 @@ import { Job } from 'bull';
 export class JobProcessor {
   private readonly logger = new Logger(JobProcessor.name);
 
-  @Process()
+  @Process('crawl')
   handleJob(job: Job<any>) {
     this.logger.log(`"handleJob" runs: ${JSON.stringify(job.data, null, 2)}`);
   }
