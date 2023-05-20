@@ -10,7 +10,6 @@ import {
   Stack,
   Text,
   Title,
-  rem,
 } from '@mantine/core';
 import { client } from '../client';
 import { FaPlusCircle } from 'react-icons/fa';
@@ -19,6 +18,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 export default function Page() {
   const { user, isLoaded } = useUser();
+  console.log({ user });
   const queryClient = useQueryClient();
 
   if (!user) return null;

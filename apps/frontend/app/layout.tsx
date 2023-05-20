@@ -1,4 +1,5 @@
 import Providers from '../client';
+import Shell from '../comoponents/shell';
 import RootStyleRegistry from './emotion';
 import { ClerkProvider } from '@clerk/nextjs';
 
@@ -13,7 +14,9 @@ export default function RootLayout({
         <head />
         <body>
           <Providers>
-            <RootStyleRegistry>{children}</RootStyleRegistry>
+            <RootStyleRegistry>
+              <Shell>{children}</Shell>
+            </RootStyleRegistry>
           </Providers>
         </body>
       </html>

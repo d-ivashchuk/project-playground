@@ -33,6 +33,7 @@ export class PostController implements NestControllerInterface<typeof c> {
       published: body.published,
       content: body.content,
       description: body.description,
+      thisIsNice: 123,
       importantFieldWithoutDefault: body.importantFieldWithoutDefault,
     });
 

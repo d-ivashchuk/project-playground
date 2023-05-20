@@ -18,6 +18,16 @@ services:
       - '6379:6379'
     volumes:
       - redis:/data
+  bull-monitor:
+    image: ejhayes/nodejs-bull-monitor:latest
+    ports:
+      - 4848:4848
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      BULL_WATCH_QUEUE_PREFIXES: bull
+      PORT: 4848
+      UI: bull-master
 
 volumes:
   db:
