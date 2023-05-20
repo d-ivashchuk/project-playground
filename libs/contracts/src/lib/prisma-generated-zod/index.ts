@@ -18,9 +18,7 @@ export const ProjectScalarFieldEnumSchema = z.enum(['id','name','createdAt','upd
 
 export const QueryModeSchema = z.enum(['default','insensitive']);
 
-export const ResultScalarFieldEnumSchema = z.enum(['id','runId','url','screenshotUrl','diffUrl','createdAt','updatedAt']);
-
-export const RunScalarFieldEnumSchema = z.enum(['id','jobId','status','startedAt','endedAt']);
+export const RunScalarFieldEnumSchema = z.enum(['id','jobId','status','startedAt','endedAt','screenshotUrl','diffUrl']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
@@ -92,25 +90,11 @@ export const RunSchema = z.object({
   status: z.string(),
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().nullable(),
+  screenshotUrl: z.string(),
+  diffUrl: z.string().nullable(),
 })
 
 export type Run = z.infer<typeof RunSchema>
-
-/////////////////////////////////////////
-// RESULT SCHEMA
-/////////////////////////////////////////
-
-export const ResultSchema = z.object({
-  id: z.number().int(),
-  runId: z.number().int(),
-  url: z.string(),
-  screenshotUrl: z.string(),
-  diffUrl: z.string().nullable(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-})
-
-export type Result = z.infer<typeof ResultSchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -207,21 +191,11 @@ export const JobSelectSchema: z.ZodType<Prisma.JobSelect> = z.object({
 
 export const RunIncludeSchema: z.ZodType<Prisma.RunInclude> = z.object({
   job: z.union([z.boolean(),z.lazy(() => JobArgsSchema)]).optional(),
-  results: z.union([z.boolean(),z.lazy(() => ResultFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => RunCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
 export const RunArgsSchema: z.ZodType<Prisma.RunArgs> = z.object({
   select: z.lazy(() => RunSelectSchema).optional(),
   include: z.lazy(() => RunIncludeSchema).optional(),
-}).strict();
-
-export const RunCountOutputTypeArgsSchema: z.ZodType<Prisma.RunCountOutputTypeArgs> = z.object({
-  select: z.lazy(() => RunCountOutputTypeSelectSchema).nullish(),
-}).strict();
-
-export const RunCountOutputTypeSelectSchema: z.ZodType<Prisma.RunCountOutputTypeSelect> = z.object({
-  results: z.boolean().optional(),
 }).strict();
 
 export const RunSelectSchema: z.ZodType<Prisma.RunSelect> = z.object({
@@ -230,32 +204,9 @@ export const RunSelectSchema: z.ZodType<Prisma.RunSelect> = z.object({
   status: z.boolean().optional(),
   startedAt: z.boolean().optional(),
   endedAt: z.boolean().optional(),
-  job: z.union([z.boolean(),z.lazy(() => JobArgsSchema)]).optional(),
-  results: z.union([z.boolean(),z.lazy(() => ResultFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => RunCountOutputTypeArgsSchema)]).optional(),
-}).strict()
-
-// RESULT
-//------------------------------------------------------
-
-export const ResultIncludeSchema: z.ZodType<Prisma.ResultInclude> = z.object({
-  run: z.union([z.boolean(),z.lazy(() => RunArgsSchema)]).optional(),
-}).strict()
-
-export const ResultArgsSchema: z.ZodType<Prisma.ResultArgs> = z.object({
-  select: z.lazy(() => ResultSelectSchema).optional(),
-  include: z.lazy(() => ResultIncludeSchema).optional(),
-}).strict();
-
-export const ResultSelectSchema: z.ZodType<Prisma.ResultSelect> = z.object({
-  id: z.boolean().optional(),
-  runId: z.boolean().optional(),
-  url: z.boolean().optional(),
   screenshotUrl: z.boolean().optional(),
   diffUrl: z.boolean().optional(),
-  createdAt: z.boolean().optional(),
-  updatedAt: z.boolean().optional(),
-  run: z.union([z.boolean(),z.lazy(() => RunArgsSchema)]).optional(),
+  job: z.union([z.boolean(),z.lazy(() => JobArgsSchema)]).optional(),
 }).strict()
 
 
@@ -461,8 +412,9 @@ export const RunWhereInputSchema: z.ZodType<Prisma.RunWhereInput> = z.object({
   status: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   startedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   endedAt: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  screenshotUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  diffUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   job: z.union([ z.lazy(() => JobRelationFilterSchema),z.lazy(() => JobWhereInputSchema) ]).optional(),
-  results: z.lazy(() => ResultListRelationFilterSchema).optional()
 }).strict();
 
 export const RunOrderByWithRelationInputSchema: z.ZodType<Prisma.RunOrderByWithRelationInput> = z.object({
@@ -471,8 +423,9 @@ export const RunOrderByWithRelationInputSchema: z.ZodType<Prisma.RunOrderByWithR
   status: z.lazy(() => SortOrderSchema).optional(),
   startedAt: z.lazy(() => SortOrderSchema).optional(),
   endedAt: z.lazy(() => SortOrderSchema).optional(),
-  job: z.lazy(() => JobOrderByWithRelationInputSchema).optional(),
-  results: z.lazy(() => ResultOrderByRelationAggregateInputSchema).optional()
+  screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
+  diffUrl: z.lazy(() => SortOrderSchema).optional(),
+  job: z.lazy(() => JobOrderByWithRelationInputSchema).optional()
 }).strict();
 
 export const RunWhereUniqueInputSchema: z.ZodType<Prisma.RunWhereUniqueInput> = z.object({
@@ -485,6 +438,8 @@ export const RunOrderByWithAggregationInputSchema: z.ZodType<Prisma.RunOrderByWi
   status: z.lazy(() => SortOrderSchema).optional(),
   startedAt: z.lazy(() => SortOrderSchema).optional(),
   endedAt: z.lazy(() => SortOrderSchema).optional(),
+  screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
+  diffUrl: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => RunCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => RunAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => RunMaxOrderByAggregateInputSchema).optional(),
@@ -501,63 +456,8 @@ export const RunScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.RunScalar
   status: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   startedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   endedAt: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
-}).strict();
-
-export const ResultWhereInputSchema: z.ZodType<Prisma.ResultWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => ResultWhereInputSchema),z.lazy(() => ResultWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => ResultWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => ResultWhereInputSchema),z.lazy(() => ResultWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  runId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  url: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  screenshotUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  diffUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  run: z.union([ z.lazy(() => RunRelationFilterSchema),z.lazy(() => RunWhereInputSchema) ]).optional(),
-}).strict();
-
-export const ResultOrderByWithRelationInputSchema: z.ZodType<Prisma.ResultOrderByWithRelationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  runId: z.lazy(() => SortOrderSchema).optional(),
-  url: z.lazy(() => SortOrderSchema).optional(),
-  screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
-  diffUrl: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  run: z.lazy(() => RunOrderByWithRelationInputSchema).optional()
-}).strict();
-
-export const ResultWhereUniqueInputSchema: z.ZodType<Prisma.ResultWhereUniqueInput> = z.object({
-  id: z.number().int().optional()
-}).strict();
-
-export const ResultOrderByWithAggregationInputSchema: z.ZodType<Prisma.ResultOrderByWithAggregationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  runId: z.lazy(() => SortOrderSchema).optional(),
-  url: z.lazy(() => SortOrderSchema).optional(),
-  screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
-  diffUrl: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => ResultCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => ResultAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => ResultMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => ResultMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => ResultSumOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const ResultScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ResultScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => ResultScalarWhereWithAggregatesInputSchema),z.lazy(() => ResultScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => ResultScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => ResultScalarWhereWithAggregatesInputSchema),z.lazy(() => ResultScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  runId: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  url: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   screenshotUrl: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   diffUrl: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
-  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
 
 export const PostCreateInputSchema: z.ZodType<Prisma.PostCreateInput> = z.object({
@@ -816,8 +716,9 @@ export const RunCreateInputSchema: z.ZodType<Prisma.RunCreateInput> = z.object({
   status: z.string(),
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().optional().nullable(),
-  job: z.lazy(() => JobCreateNestedOneWithoutRunsInputSchema),
-  results: z.lazy(() => ResultCreateNestedManyWithoutRunInputSchema).optional()
+  screenshotUrl: z.string(),
+  diffUrl: z.string().optional().nullable(),
+  job: z.lazy(() => JobCreateNestedOneWithoutRunsInputSchema)
 }).strict();
 
 export const RunUncheckedCreateInputSchema: z.ZodType<Prisma.RunUncheckedCreateInput> = z.object({
@@ -826,15 +727,17 @@ export const RunUncheckedCreateInputSchema: z.ZodType<Prisma.RunUncheckedCreateI
   status: z.string(),
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().optional().nullable(),
-  results: z.lazy(() => ResultUncheckedCreateNestedManyWithoutRunInputSchema).optional()
+  screenshotUrl: z.string(),
+  diffUrl: z.string().optional().nullable()
 }).strict();
 
 export const RunUpdateInputSchema: z.ZodType<Prisma.RunUpdateInput> = z.object({
   status: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  job: z.lazy(() => JobUpdateOneRequiredWithoutRunsNestedInputSchema).optional(),
-  results: z.lazy(() => ResultUpdateManyWithoutRunNestedInputSchema).optional()
+  screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  job: z.lazy(() => JobUpdateOneRequiredWithoutRunsNestedInputSchema).optional()
 }).strict();
 
 export const RunUncheckedUpdateInputSchema: z.ZodType<Prisma.RunUncheckedUpdateInput> = z.object({
@@ -843,7 +746,8 @@ export const RunUncheckedUpdateInputSchema: z.ZodType<Prisma.RunUncheckedUpdateI
   status: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  results: z.lazy(() => ResultUncheckedUpdateManyWithoutRunNestedInputSchema).optional()
+  screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const RunCreateManyInputSchema: z.ZodType<Prisma.RunCreateManyInput> = z.object({
@@ -851,13 +755,17 @@ export const RunCreateManyInputSchema: z.ZodType<Prisma.RunCreateManyInput> = z.
   jobId: z.string(),
   status: z.string(),
   startedAt: z.coerce.date(),
-  endedAt: z.coerce.date().optional().nullable()
+  endedAt: z.coerce.date().optional().nullable(),
+  screenshotUrl: z.string(),
+  diffUrl: z.string().optional().nullable()
 }).strict();
 
 export const RunUpdateManyMutationInputSchema: z.ZodType<Prisma.RunUpdateManyMutationInput> = z.object({
   status: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const RunUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RunUncheckedUpdateManyInput> = z.object({
@@ -866,72 +774,8 @@ export const RunUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RunUncheckedUpd
   status: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-}).strict();
-
-export const ResultCreateInputSchema: z.ZodType<Prisma.ResultCreateInput> = z.object({
-  url: z.string(),
-  screenshotUrl: z.string(),
-  diffUrl: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  run: z.lazy(() => RunCreateNestedOneWithoutResultsInputSchema)
-}).strict();
-
-export const ResultUncheckedCreateInputSchema: z.ZodType<Prisma.ResultUncheckedCreateInput> = z.object({
-  id: z.number().int().optional(),
-  runId: z.number().int(),
-  url: z.string(),
-  screenshotUrl: z.string(),
-  diffUrl: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
-}).strict();
-
-export const ResultUpdateInputSchema: z.ZodType<Prisma.ResultUpdateInput> = z.object({
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  run: z.lazy(() => RunUpdateOneRequiredWithoutResultsNestedInputSchema).optional()
-}).strict();
-
-export const ResultUncheckedUpdateInputSchema: z.ZodType<Prisma.ResultUncheckedUpdateInput> = z.object({
-  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  runId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ResultCreateManyInputSchema: z.ZodType<Prisma.ResultCreateManyInput> = z.object({
-  id: z.number().int().optional(),
-  runId: z.number().int(),
-  url: z.string(),
-  screenshotUrl: z.string(),
-  diffUrl: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
-}).strict();
-
-export const ResultUpdateManyMutationInputSchema: z.ZodType<Prisma.ResultUpdateManyMutationInput> = z.object({
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ResultUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ResultUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  runId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
@@ -1289,22 +1133,14 @@ export const JobRelationFilterSchema: z.ZodType<Prisma.JobRelationFilter> = z.ob
   isNot: z.lazy(() => JobWhereInputSchema).optional()
 }).strict();
 
-export const ResultListRelationFilterSchema: z.ZodType<Prisma.ResultListRelationFilter> = z.object({
-  every: z.lazy(() => ResultWhereInputSchema).optional(),
-  some: z.lazy(() => ResultWhereInputSchema).optional(),
-  none: z.lazy(() => ResultWhereInputSchema).optional()
-}).strict();
-
-export const ResultOrderByRelationAggregateInputSchema: z.ZodType<Prisma.ResultOrderByRelationAggregateInput> = z.object({
-  _count: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
 export const RunCountOrderByAggregateInputSchema: z.ZodType<Prisma.RunCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   jobId: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   startedAt: z.lazy(() => SortOrderSchema).optional(),
-  endedAt: z.lazy(() => SortOrderSchema).optional()
+  endedAt: z.lazy(() => SortOrderSchema).optional(),
+  screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
+  diffUrl: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const RunAvgOrderByAggregateInputSchema: z.ZodType<Prisma.RunAvgOrderByAggregateInput> = z.object({
@@ -1316,7 +1152,9 @@ export const RunMaxOrderByAggregateInputSchema: z.ZodType<Prisma.RunMaxOrderByAg
   jobId: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   startedAt: z.lazy(() => SortOrderSchema).optional(),
-  endedAt: z.lazy(() => SortOrderSchema).optional()
+  endedAt: z.lazy(() => SortOrderSchema).optional(),
+  screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
+  diffUrl: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const RunMinOrderByAggregateInputSchema: z.ZodType<Prisma.RunMinOrderByAggregateInput> = z.object({
@@ -1324,7 +1162,9 @@ export const RunMinOrderByAggregateInputSchema: z.ZodType<Prisma.RunMinOrderByAg
   jobId: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   startedAt: z.lazy(() => SortOrderSchema).optional(),
-  endedAt: z.lazy(() => SortOrderSchema).optional()
+  endedAt: z.lazy(() => SortOrderSchema).optional(),
+  screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
+  diffUrl: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const RunSumOrderByAggregateInputSchema: z.ZodType<Prisma.RunSumOrderByAggregateInput> = z.object({
@@ -1343,51 +1183,6 @@ export const DateTimeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.DateTi
   _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedDateTimeNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedDateTimeNullableFilterSchema).optional()
-}).strict();
-
-export const RunRelationFilterSchema: z.ZodType<Prisma.RunRelationFilter> = z.object({
-  is: z.lazy(() => RunWhereInputSchema).optional(),
-  isNot: z.lazy(() => RunWhereInputSchema).optional()
-}).strict();
-
-export const ResultCountOrderByAggregateInputSchema: z.ZodType<Prisma.ResultCountOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  runId: z.lazy(() => SortOrderSchema).optional(),
-  url: z.lazy(() => SortOrderSchema).optional(),
-  screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
-  diffUrl: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const ResultAvgOrderByAggregateInputSchema: z.ZodType<Prisma.ResultAvgOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  runId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const ResultMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ResultMaxOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  runId: z.lazy(() => SortOrderSchema).optional(),
-  url: z.lazy(() => SortOrderSchema).optional(),
-  screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
-  diffUrl: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const ResultMinOrderByAggregateInputSchema: z.ZodType<Prisma.ResultMinOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  runId: z.lazy(() => SortOrderSchema).optional(),
-  url: z.lazy(() => SortOrderSchema).optional(),
-  screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
-  diffUrl: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const ResultSumOrderByAggregateInputSchema: z.ZodType<Prisma.ResultSumOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  runId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PostCreatetagsInputSchema: z.ZodType<Prisma.PostCreatetagsInput> = z.object({
@@ -1545,20 +1340,6 @@ export const JobCreateNestedOneWithoutRunsInputSchema: z.ZodType<Prisma.JobCreat
   connect: z.lazy(() => JobWhereUniqueInputSchema).optional()
 }).strict();
 
-export const ResultCreateNestedManyWithoutRunInputSchema: z.ZodType<Prisma.ResultCreateNestedManyWithoutRunInput> = z.object({
-  create: z.union([ z.lazy(() => ResultCreateWithoutRunInputSchema),z.lazy(() => ResultCreateWithoutRunInputSchema).array(),z.lazy(() => ResultUncheckedCreateWithoutRunInputSchema),z.lazy(() => ResultUncheckedCreateWithoutRunInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => ResultCreateOrConnectWithoutRunInputSchema),z.lazy(() => ResultCreateOrConnectWithoutRunInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => ResultCreateManyRunInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => ResultWhereUniqueInputSchema),z.lazy(() => ResultWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const ResultUncheckedCreateNestedManyWithoutRunInputSchema: z.ZodType<Prisma.ResultUncheckedCreateNestedManyWithoutRunInput> = z.object({
-  create: z.union([ z.lazy(() => ResultCreateWithoutRunInputSchema),z.lazy(() => ResultCreateWithoutRunInputSchema).array(),z.lazy(() => ResultUncheckedCreateWithoutRunInputSchema),z.lazy(() => ResultUncheckedCreateWithoutRunInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => ResultCreateOrConnectWithoutRunInputSchema),z.lazy(() => ResultCreateOrConnectWithoutRunInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => ResultCreateManyRunInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => ResultWhereUniqueInputSchema),z.lazy(() => ResultWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
 export const NullableDateTimeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableDateTimeFieldUpdateOperationsInput> = z.object({
   set: z.coerce.date().optional().nullable()
 }).strict();
@@ -1569,48 +1350,6 @@ export const JobUpdateOneRequiredWithoutRunsNestedInputSchema: z.ZodType<Prisma.
   upsert: z.lazy(() => JobUpsertWithoutRunsInputSchema).optional(),
   connect: z.lazy(() => JobWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => JobUpdateWithoutRunsInputSchema),z.lazy(() => JobUncheckedUpdateWithoutRunsInputSchema) ]).optional(),
-}).strict();
-
-export const ResultUpdateManyWithoutRunNestedInputSchema: z.ZodType<Prisma.ResultUpdateManyWithoutRunNestedInput> = z.object({
-  create: z.union([ z.lazy(() => ResultCreateWithoutRunInputSchema),z.lazy(() => ResultCreateWithoutRunInputSchema).array(),z.lazy(() => ResultUncheckedCreateWithoutRunInputSchema),z.lazy(() => ResultUncheckedCreateWithoutRunInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => ResultCreateOrConnectWithoutRunInputSchema),z.lazy(() => ResultCreateOrConnectWithoutRunInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => ResultUpsertWithWhereUniqueWithoutRunInputSchema),z.lazy(() => ResultUpsertWithWhereUniqueWithoutRunInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => ResultCreateManyRunInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => ResultWhereUniqueInputSchema),z.lazy(() => ResultWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => ResultWhereUniqueInputSchema),z.lazy(() => ResultWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => ResultWhereUniqueInputSchema),z.lazy(() => ResultWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => ResultWhereUniqueInputSchema),z.lazy(() => ResultWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => ResultUpdateWithWhereUniqueWithoutRunInputSchema),z.lazy(() => ResultUpdateWithWhereUniqueWithoutRunInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => ResultUpdateManyWithWhereWithoutRunInputSchema),z.lazy(() => ResultUpdateManyWithWhereWithoutRunInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => ResultScalarWhereInputSchema),z.lazy(() => ResultScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const ResultUncheckedUpdateManyWithoutRunNestedInputSchema: z.ZodType<Prisma.ResultUncheckedUpdateManyWithoutRunNestedInput> = z.object({
-  create: z.union([ z.lazy(() => ResultCreateWithoutRunInputSchema),z.lazy(() => ResultCreateWithoutRunInputSchema).array(),z.lazy(() => ResultUncheckedCreateWithoutRunInputSchema),z.lazy(() => ResultUncheckedCreateWithoutRunInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => ResultCreateOrConnectWithoutRunInputSchema),z.lazy(() => ResultCreateOrConnectWithoutRunInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => ResultUpsertWithWhereUniqueWithoutRunInputSchema),z.lazy(() => ResultUpsertWithWhereUniqueWithoutRunInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => ResultCreateManyRunInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => ResultWhereUniqueInputSchema),z.lazy(() => ResultWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => ResultWhereUniqueInputSchema),z.lazy(() => ResultWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => ResultWhereUniqueInputSchema),z.lazy(() => ResultWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => ResultWhereUniqueInputSchema),z.lazy(() => ResultWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => ResultUpdateWithWhereUniqueWithoutRunInputSchema),z.lazy(() => ResultUpdateWithWhereUniqueWithoutRunInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => ResultUpdateManyWithWhereWithoutRunInputSchema),z.lazy(() => ResultUpdateManyWithWhereWithoutRunInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => ResultScalarWhereInputSchema),z.lazy(() => ResultScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const RunCreateNestedOneWithoutResultsInputSchema: z.ZodType<Prisma.RunCreateNestedOneWithoutResultsInput> = z.object({
-  create: z.union([ z.lazy(() => RunCreateWithoutResultsInputSchema),z.lazy(() => RunUncheckedCreateWithoutResultsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => RunCreateOrConnectWithoutResultsInputSchema).optional(),
-  connect: z.lazy(() => RunWhereUniqueInputSchema).optional()
-}).strict();
-
-export const RunUpdateOneRequiredWithoutResultsNestedInputSchema: z.ZodType<Prisma.RunUpdateOneRequiredWithoutResultsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => RunCreateWithoutResultsInputSchema),z.lazy(() => RunUncheckedCreateWithoutResultsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => RunCreateOrConnectWithoutResultsInputSchema).optional(),
-  upsert: z.lazy(() => RunUpsertWithoutResultsInputSchema).optional(),
-  connect: z.lazy(() => RunWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => RunUpdateWithoutResultsInputSchema),z.lazy(() => RunUncheckedUpdateWithoutResultsInputSchema) ]).optional(),
 }).strict();
 
 export const NestedStringFilterSchema: z.ZodType<Prisma.NestedStringFilter> = z.object({
@@ -1905,7 +1644,8 @@ export const RunCreateWithoutJobInputSchema: z.ZodType<Prisma.RunCreateWithoutJo
   status: z.string(),
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().optional().nullable(),
-  results: z.lazy(() => ResultCreateNestedManyWithoutRunInputSchema).optional()
+  screenshotUrl: z.string(),
+  diffUrl: z.string().optional().nullable()
 }).strict();
 
 export const RunUncheckedCreateWithoutJobInputSchema: z.ZodType<Prisma.RunUncheckedCreateWithoutJobInput> = z.object({
@@ -1913,7 +1653,8 @@ export const RunUncheckedCreateWithoutJobInputSchema: z.ZodType<Prisma.RunUnchec
   status: z.string(),
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().optional().nullable(),
-  results: z.lazy(() => ResultUncheckedCreateNestedManyWithoutRunInputSchema).optional()
+  screenshotUrl: z.string(),
+  diffUrl: z.string().optional().nullable()
 }).strict();
 
 export const RunCreateOrConnectWithoutJobInputSchema: z.ZodType<Prisma.RunCreateOrConnectWithoutJobInput> = z.object({
@@ -1970,6 +1711,8 @@ export const RunScalarWhereInputSchema: z.ZodType<Prisma.RunScalarWhereInput> = 
   status: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   startedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   endedAt: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  screenshotUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  diffUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
 
 export const ProjectUpsertWithoutJobsInputSchema: z.ZodType<Prisma.ProjectUpsertWithoutJobsInput> = z.object({
@@ -2024,33 +1767,6 @@ export const JobCreateOrConnectWithoutRunsInputSchema: z.ZodType<Prisma.JobCreat
   create: z.union([ z.lazy(() => JobCreateWithoutRunsInputSchema),z.lazy(() => JobUncheckedCreateWithoutRunsInputSchema) ]),
 }).strict();
 
-export const ResultCreateWithoutRunInputSchema: z.ZodType<Prisma.ResultCreateWithoutRunInput> = z.object({
-  url: z.string(),
-  screenshotUrl: z.string(),
-  diffUrl: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
-}).strict();
-
-export const ResultUncheckedCreateWithoutRunInputSchema: z.ZodType<Prisma.ResultUncheckedCreateWithoutRunInput> = z.object({
-  id: z.number().int().optional(),
-  url: z.string(),
-  screenshotUrl: z.string(),
-  diffUrl: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
-}).strict();
-
-export const ResultCreateOrConnectWithoutRunInputSchema: z.ZodType<Prisma.ResultCreateOrConnectWithoutRunInput> = z.object({
-  where: z.lazy(() => ResultWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => ResultCreateWithoutRunInputSchema),z.lazy(() => ResultUncheckedCreateWithoutRunInputSchema) ]),
-}).strict();
-
-export const ResultCreateManyRunInputEnvelopeSchema: z.ZodType<Prisma.ResultCreateManyRunInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => ResultCreateManyRunInputSchema),z.lazy(() => ResultCreateManyRunInputSchema).array() ]),
-  skipDuplicates: z.boolean().optional()
-}).strict();
-
 export const JobUpsertWithoutRunsInputSchema: z.ZodType<Prisma.JobUpsertWithoutRunsInput> = z.object({
   update: z.union([ z.lazy(() => JobUpdateWithoutRunsInputSchema),z.lazy(() => JobUncheckedUpdateWithoutRunsInputSchema) ]),
   create: z.union([ z.lazy(() => JobCreateWithoutRunsInputSchema),z.lazy(() => JobUncheckedCreateWithoutRunsInputSchema) ]),
@@ -2082,75 +1798,6 @@ export const JobUncheckedUpdateWithoutRunsInputSchema: z.ZodType<Prisma.JobUnche
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   projectId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-}).strict();
-
-export const ResultUpsertWithWhereUniqueWithoutRunInputSchema: z.ZodType<Prisma.ResultUpsertWithWhereUniqueWithoutRunInput> = z.object({
-  where: z.lazy(() => ResultWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => ResultUpdateWithoutRunInputSchema),z.lazy(() => ResultUncheckedUpdateWithoutRunInputSchema) ]),
-  create: z.union([ z.lazy(() => ResultCreateWithoutRunInputSchema),z.lazy(() => ResultUncheckedCreateWithoutRunInputSchema) ]),
-}).strict();
-
-export const ResultUpdateWithWhereUniqueWithoutRunInputSchema: z.ZodType<Prisma.ResultUpdateWithWhereUniqueWithoutRunInput> = z.object({
-  where: z.lazy(() => ResultWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => ResultUpdateWithoutRunInputSchema),z.lazy(() => ResultUncheckedUpdateWithoutRunInputSchema) ]),
-}).strict();
-
-export const ResultUpdateManyWithWhereWithoutRunInputSchema: z.ZodType<Prisma.ResultUpdateManyWithWhereWithoutRunInput> = z.object({
-  where: z.lazy(() => ResultScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => ResultUpdateManyMutationInputSchema),z.lazy(() => ResultUncheckedUpdateManyWithoutResultsInputSchema) ]),
-}).strict();
-
-export const ResultScalarWhereInputSchema: z.ZodType<Prisma.ResultScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => ResultScalarWhereInputSchema),z.lazy(() => ResultScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => ResultScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => ResultScalarWhereInputSchema),z.lazy(() => ResultScalarWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  runId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  url: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  screenshotUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  diffUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-}).strict();
-
-export const RunCreateWithoutResultsInputSchema: z.ZodType<Prisma.RunCreateWithoutResultsInput> = z.object({
-  status: z.string(),
-  startedAt: z.coerce.date(),
-  endedAt: z.coerce.date().optional().nullable(),
-  job: z.lazy(() => JobCreateNestedOneWithoutRunsInputSchema)
-}).strict();
-
-export const RunUncheckedCreateWithoutResultsInputSchema: z.ZodType<Prisma.RunUncheckedCreateWithoutResultsInput> = z.object({
-  id: z.number().int().optional(),
-  jobId: z.string(),
-  status: z.string(),
-  startedAt: z.coerce.date(),
-  endedAt: z.coerce.date().optional().nullable()
-}).strict();
-
-export const RunCreateOrConnectWithoutResultsInputSchema: z.ZodType<Prisma.RunCreateOrConnectWithoutResultsInput> = z.object({
-  where: z.lazy(() => RunWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => RunCreateWithoutResultsInputSchema),z.lazy(() => RunUncheckedCreateWithoutResultsInputSchema) ]),
-}).strict();
-
-export const RunUpsertWithoutResultsInputSchema: z.ZodType<Prisma.RunUpsertWithoutResultsInput> = z.object({
-  update: z.union([ z.lazy(() => RunUpdateWithoutResultsInputSchema),z.lazy(() => RunUncheckedUpdateWithoutResultsInputSchema) ]),
-  create: z.union([ z.lazy(() => RunCreateWithoutResultsInputSchema),z.lazy(() => RunUncheckedCreateWithoutResultsInputSchema) ]),
-}).strict();
-
-export const RunUpdateWithoutResultsInputSchema: z.ZodType<Prisma.RunUpdateWithoutResultsInput> = z.object({
-  status: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  job: z.lazy(() => JobUpdateOneRequiredWithoutRunsNestedInputSchema).optional()
-}).strict();
-
-export const RunUncheckedUpdateWithoutResultsInputSchema: z.ZodType<Prisma.RunUncheckedUpdateWithoutResultsInput> = z.object({
-  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  jobId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  status: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const JobCreateManyProjectInputSchema: z.ZodType<Prisma.JobCreateManyProjectInput> = z.object({
@@ -2211,14 +1858,17 @@ export const RunCreateManyJobInputSchema: z.ZodType<Prisma.RunCreateManyJobInput
   id: z.number().int().optional(),
   status: z.string(),
   startedAt: z.coerce.date(),
-  endedAt: z.coerce.date().optional().nullable()
+  endedAt: z.coerce.date().optional().nullable(),
+  screenshotUrl: z.string(),
+  diffUrl: z.string().optional().nullable()
 }).strict();
 
 export const RunUpdateWithoutJobInputSchema: z.ZodType<Prisma.RunUpdateWithoutJobInput> = z.object({
   status: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  results: z.lazy(() => ResultUpdateManyWithoutRunNestedInputSchema).optional()
+  screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const RunUncheckedUpdateWithoutJobInputSchema: z.ZodType<Prisma.RunUncheckedUpdateWithoutJobInput> = z.object({
@@ -2226,7 +1876,8 @@ export const RunUncheckedUpdateWithoutJobInputSchema: z.ZodType<Prisma.RunUnchec
   status: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  results: z.lazy(() => ResultUncheckedUpdateManyWithoutRunNestedInputSchema).optional()
+  screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const RunUncheckedUpdateManyWithoutRunsInputSchema: z.ZodType<Prisma.RunUncheckedUpdateManyWithoutRunsInput> = z.object({
@@ -2234,41 +1885,8 @@ export const RunUncheckedUpdateManyWithoutRunsInputSchema: z.ZodType<Prisma.RunU
   status: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-}).strict();
-
-export const ResultCreateManyRunInputSchema: z.ZodType<Prisma.ResultCreateManyRunInput> = z.object({
-  id: z.number().int().optional(),
-  url: z.string(),
-  screenshotUrl: z.string(),
-  diffUrl: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
-}).strict();
-
-export const ResultUpdateWithoutRunInputSchema: z.ZodType<Prisma.ResultUpdateWithoutRunInput> = z.object({
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ResultUncheckedUpdateWithoutRunInputSchema: z.ZodType<Prisma.ResultUncheckedUpdateWithoutRunInput> = z.object({
-  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ResultUncheckedUpdateManyWithoutResultsInputSchema: z.ZodType<Prisma.ResultUncheckedUpdateManyWithoutResultsInput> = z.object({
-  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 /////////////////////////////////////////
@@ -2518,68 +2136,6 @@ export const RunFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.RunFindUniqueOrThr
   where: RunWhereUniqueInputSchema,
 }).strict()
 
-export const ResultFindFirstArgsSchema: z.ZodType<Prisma.ResultFindFirstArgs> = z.object({
-  select: ResultSelectSchema.optional(),
-  include: ResultIncludeSchema.optional(),
-  where: ResultWhereInputSchema.optional(),
-  orderBy: z.union([ ResultOrderByWithRelationInputSchema.array(),ResultOrderByWithRelationInputSchema ]).optional(),
-  cursor: ResultWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: ResultScalarFieldEnumSchema.array().optional(),
-}).strict()
-
-export const ResultFindFirstOrThrowArgsSchema: z.ZodType<Prisma.ResultFindFirstOrThrowArgs> = z.object({
-  select: ResultSelectSchema.optional(),
-  include: ResultIncludeSchema.optional(),
-  where: ResultWhereInputSchema.optional(),
-  orderBy: z.union([ ResultOrderByWithRelationInputSchema.array(),ResultOrderByWithRelationInputSchema ]).optional(),
-  cursor: ResultWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: ResultScalarFieldEnumSchema.array().optional(),
-}).strict()
-
-export const ResultFindManyArgsSchema: z.ZodType<Prisma.ResultFindManyArgs> = z.object({
-  select: ResultSelectSchema.optional(),
-  include: ResultIncludeSchema.optional(),
-  where: ResultWhereInputSchema.optional(),
-  orderBy: z.union([ ResultOrderByWithRelationInputSchema.array(),ResultOrderByWithRelationInputSchema ]).optional(),
-  cursor: ResultWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: ResultScalarFieldEnumSchema.array().optional(),
-}).strict()
-
-export const ResultAggregateArgsSchema: z.ZodType<Prisma.ResultAggregateArgs> = z.object({
-  where: ResultWhereInputSchema.optional(),
-  orderBy: z.union([ ResultOrderByWithRelationInputSchema.array(),ResultOrderByWithRelationInputSchema ]).optional(),
-  cursor: ResultWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict()
-
-export const ResultGroupByArgsSchema: z.ZodType<Prisma.ResultGroupByArgs> = z.object({
-  where: ResultWhereInputSchema.optional(),
-  orderBy: z.union([ ResultOrderByWithAggregationInputSchema.array(),ResultOrderByWithAggregationInputSchema ]).optional(),
-  by: ResultScalarFieldEnumSchema.array(),
-  having: ResultScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict()
-
-export const ResultFindUniqueArgsSchema: z.ZodType<Prisma.ResultFindUniqueArgs> = z.object({
-  select: ResultSelectSchema.optional(),
-  include: ResultIncludeSchema.optional(),
-  where: ResultWhereUniqueInputSchema,
-}).strict()
-
-export const ResultFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ResultFindUniqueOrThrowArgs> = z.object({
-  select: ResultSelectSchema.optional(),
-  include: ResultIncludeSchema.optional(),
-  where: ResultWhereUniqueInputSchema,
-}).strict()
-
 export const PostCreateArgsSchema: z.ZodType<Prisma.PostCreateArgs> = z.object({
   select: PostSelectSchema.optional(),
   data: z.union([ PostCreateInputSchema,PostUncheckedCreateInputSchema ]),
@@ -2738,45 +2294,4 @@ export const RunUpdateManyArgsSchema: z.ZodType<Prisma.RunUpdateManyArgs> = z.ob
 
 export const RunDeleteManyArgsSchema: z.ZodType<Prisma.RunDeleteManyArgs> = z.object({
   where: RunWhereInputSchema.optional(),
-}).strict()
-
-export const ResultCreateArgsSchema: z.ZodType<Prisma.ResultCreateArgs> = z.object({
-  select: ResultSelectSchema.optional(),
-  include: ResultIncludeSchema.optional(),
-  data: z.union([ ResultCreateInputSchema,ResultUncheckedCreateInputSchema ]),
-}).strict()
-
-export const ResultUpsertArgsSchema: z.ZodType<Prisma.ResultUpsertArgs> = z.object({
-  select: ResultSelectSchema.optional(),
-  include: ResultIncludeSchema.optional(),
-  where: ResultWhereUniqueInputSchema,
-  create: z.union([ ResultCreateInputSchema,ResultUncheckedCreateInputSchema ]),
-  update: z.union([ ResultUpdateInputSchema,ResultUncheckedUpdateInputSchema ]),
-}).strict()
-
-export const ResultCreateManyArgsSchema: z.ZodType<Prisma.ResultCreateManyArgs> = z.object({
-  data: z.union([ ResultCreateManyInputSchema,ResultCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict()
-
-export const ResultDeleteArgsSchema: z.ZodType<Prisma.ResultDeleteArgs> = z.object({
-  select: ResultSelectSchema.optional(),
-  include: ResultIncludeSchema.optional(),
-  where: ResultWhereUniqueInputSchema,
-}).strict()
-
-export const ResultUpdateArgsSchema: z.ZodType<Prisma.ResultUpdateArgs> = z.object({
-  select: ResultSelectSchema.optional(),
-  include: ResultIncludeSchema.optional(),
-  data: z.union([ ResultUpdateInputSchema,ResultUncheckedUpdateInputSchema ]),
-  where: ResultWhereUniqueInputSchema,
-}).strict()
-
-export const ResultUpdateManyArgsSchema: z.ZodType<Prisma.ResultUpdateManyArgs> = z.object({
-  data: z.union([ ResultUpdateManyMutationInputSchema,ResultUncheckedUpdateManyInputSchema ]),
-  where: ResultWhereInputSchema.optional(),
-}).strict()
-
-export const ResultDeleteManyArgsSchema: z.ZodType<Prisma.ResultDeleteManyArgs> = z.object({
-  where: ResultWhereInputSchema.optional(),
 }).strict()

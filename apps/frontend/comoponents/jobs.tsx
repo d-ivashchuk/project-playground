@@ -49,7 +49,7 @@ export default function Page() {
                 name: 'New job',
                 userId: user.id,
                 schedule: '* * * * *', // every minute
-                url: 'https://lost-pixel.com',
+                url: 'https://testimonial.to',
               },
             },
             {

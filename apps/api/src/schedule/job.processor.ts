@@ -12,8 +12,15 @@ export class JobProcessor {
   } // Inject the VisualService
 
   @Process('crawl')
-  handleJob(job: Job<any>) {
+  async handleJob(job: Job<any>) {
     this.logger.log(`"handleJob" runs: ${JSON.stringify(job.data, null, 2)}`);
-    this.visualService.getJobScreenshot(job.data);
+    try {
+      await this.visualService.getJobScreenshot(job.data);
+    } catch (error) {
+      this.logger.error('Error processing job');
+      this.logger.error(error);
+      // re-throw the error or handle it accordingly
+      throw error;
+    }
   }
 }
