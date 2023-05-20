@@ -1,13 +1,13 @@
 import { Processor, Process } from '@nestjs/bull';
+import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
 
 @Processor('jobQueue')
 export class JobProcessor {
+  private readonly logger = new Logger(JobProcessor.name);
+
   @Process()
   handleJob(job: Job<any>) {
-    // Here you handle your job.
-    // This method will be invoked for each job in the queue.
-
-    console.log({ job });
+    this.logger.log(`"handleJob" runs: ${JSON.stringify(job.data, null, 2)}`);
   }
 }

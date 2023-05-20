@@ -4,7 +4,7 @@ import { JobProcessor } from './job.processor';
 import { ScheduleService } from './schedule.service';
 import { ScheduleController } from './schedule.controller';
 import { PrismaService } from '../app/prisma.service';
-// ... other imports
+import { BullBoardModule } from '@nestql/bull-board';
 
 @Global()
 @Module({
@@ -18,6 +18,7 @@ import { PrismaService } from '../app/prisma.service';
     BullModule.registerQueue({
       name: 'jobQueue',
     }),
+    BullBoardModule.register(),
   ],
   providers: [PrismaService, JobProcessor, ScheduleService],
   controllers: [ScheduleController],

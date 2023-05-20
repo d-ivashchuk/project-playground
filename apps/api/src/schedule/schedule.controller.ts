@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { ScheduleService } from './schedule.service';
 import { apiJobs } from '@no-code/contracts';
 import {
@@ -17,6 +17,8 @@ type ResponseShapes = NestResponseShapes<typeof c>;
 
 @Controller()
 export class ScheduleController implements NestControllerInterface<typeof c> {
+  private readonly logger = new Logger(ScheduleController.name);
+
   constructor(
     private readonly scheduleService: ScheduleService,
     private readonly prisma: PrismaService
@@ -31,6 +33,11 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
         ...body,
       },
     });
+
+    if (response.id) {
+      this.logger.log(`Adding job to queue: ${response.id}`);
+      await this.scheduleService.addJob(response);
+    }
 
     return { status: 201 as const, body: response };
   }
@@ -62,8 +69,6 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
   @TsRest(c.fetchTest)
   // eslint-disable-next-line no-empty-pattern
   async fetchTest(@TsRestRequest() {}) {
-    console.log(123);
-
     return { status: 201 as const, body: 'blah' };
   }
   @TsRest(c.deleteJobById)

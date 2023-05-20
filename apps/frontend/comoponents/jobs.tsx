@@ -18,7 +18,6 @@ import { useQueryClient } from '@tanstack/react-query';
 
 export default function Page() {
   const { user, isLoaded } = useUser();
-  console.log({ user });
   const queryClient = useQueryClient();
 
   if (!user) return null;
@@ -49,7 +48,7 @@ export default function Page() {
               body: {
                 name: 'New job',
                 userId: user.id,
-                schedule: '* * * * *',
+                schedule: '* * * * *', // every minute
                 url: 'https://lost-pixel.com',
               },
             },
