@@ -132,21 +132,15 @@ export class VisualService implements OnModuleInit {
       // If the resource exists, we just return its URL
       return url;
     } catch (error: any) {
-      this.logger.log('"uploadImage" resource does not exist, uploading[1]');
-      this.logger.log({
-        a: typeof error,
-        b: error,
-        d: JSON.parse(JSON.stringify(error)).error,
-        e: JSON.parse(JSON.stringify(error)),
-        f: JSON.parse(JSON.stringify(error)).error.http_code,
-      });
       // If the resource does not exist, error.code will be 'not_found'
       if (
         typeof error === 'object' &&
         error &&
         JSON.parse(JSON.stringify(error)).error.http_code === 404
       ) {
-        this.logger.log('"uploadImage" resource does not exist, uploading[2]');
+        this.logger.log(
+          `"uploadImage" resource does not exist, uploading with publicId: ${publicId}`
+        );
         return new Promise((resolve, reject) => {
           const uploadStream = cloudinary.uploader.upload_stream(
             { public_id: publicId },
