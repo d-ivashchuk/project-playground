@@ -15,6 +15,7 @@ import {
   ThemeIcon,
   UnstyledButton,
 } from '@mantine/core';
+import Link from 'next/link';
 import { ReactNode, useState } from 'react';
 
 import { FaClock, FaCheckSquare, FaHammer, FaFolder } from 'react-icons/fa';
@@ -44,14 +45,30 @@ export default function Page({ children }: { children: ReactNode }) {
             width={{ sm: 200, lg: 300 }}
           >
             <Group spacing={1} px={20}>
-              <NavbarItem icon={<FaClock />} label="Jobs" color="green" />
-              <NavbarItem icon={<FaFolder />} label="Projects" color="yellow" />
               <NavbarItem
+                href="jobs"
+                icon={<FaClock />}
+                label="Jobs"
+                color="green"
+              />
+              <NavbarItem
+                href="runs"
                 icon={<FaCheckSquare />}
                 label="Runs"
                 color="violet"
               />
-              <NavbarItem icon={<FaHammer />} label="Settings" color="blue" />
+              <NavbarItem
+                href="projects"
+                icon={<FaFolder />}
+                label="Projects"
+                color="yellow"
+              />
+              <NavbarItem
+                href="settings"
+                icon={<FaHammer />}
+                label="Settings"
+                color="blue"
+              />
             </Group>
           </Navbar>
         }
@@ -93,10 +110,12 @@ const NavbarItem = ({
   icon,
   label,
   color,
+  href,
 }: {
   icon: ReactNode;
   label: string;
   color: string;
+  href: string;
 }) => {
   return (
     <UnstyledButton
@@ -116,13 +135,21 @@ const NavbarItem = ({
         },
       })}
     >
-      <Group>
-        <ThemeIcon color={color} variant="light">
-          {icon}
-        </ThemeIcon>
+      <Link
+        style={{
+          textDecoration: 'none',
+          color: 'inherit',
+        }}
+        href={href}
+      >
+        <Group>
+          <ThemeIcon color={color} variant="light">
+            {icon}
+          </ThemeIcon>
 
-        <Text size="sm">{label}</Text>
-      </Group>
+          <Text size="sm">{label}</Text>
+        </Group>
+      </Link>
     </UnstyledButton>
   );
 };

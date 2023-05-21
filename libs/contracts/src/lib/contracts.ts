@@ -1,4 +1,8 @@
-import { JobCreateInputSchema, JobSchema } from './prisma-generated-zod';
+import {
+  JobCreateInputSchema,
+  JobSchema,
+  RunSchema,
+} from './prisma-generated-zod';
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 
@@ -55,5 +59,38 @@ export const apiJobs = c.router({
     },
     body: null,
     summary: 'Delete job by id',
+  },
+  fetchAllRunsByJobId: {
+    method: 'GET',
+    path: '/jobs/:id/runs',
+    responses: {
+      200: z.array(RunSchema),
+    },
+    summary: 'Fetch all runs by job id',
+  },
+  fetchAllRunsForUser: {
+    method: 'GET',
+    path: '/jobs/runs/user/:userId',
+    responses: {
+      200: z.array(
+        RunSchema.extend({
+          job: z.object({
+            name: z.string(),
+            url: z.string(),
+          }),
+        })
+      ),
+    },
+    summary: 'Fetch all runs for user',
+  },
+  fetchRunById: {
+    method: 'GET',
+    path: '/jobs/runs/:id',
+    responses: {
+      200: RunSchema.extend({
+        job: JobSchema,
+      }),
+    },
+    summary: 'Fetch run by id',
   },
 });

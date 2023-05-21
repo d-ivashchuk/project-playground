@@ -48,6 +48,7 @@ specifiers:
   cloudinary: ^1.37.0
   cookies-next: ^2.1.1
   crypto-js: ^4.1.1
+  date-fns: ^2.30.0
   eslint: ~8.15.0
   eslint-config-next: 13.4.1
   eslint-config-prettier: 8.1.0
@@ -105,6 +106,7 @@ dependencies:
   cloudinary: 1.37.0
   cookies-next: 2.1.1
   crypto-js: 4.1.1
+  date-fns: 2.30.0
   nestjs-pino: 3.2.0_du6d3oqfklwgjr42mxr7qalq7a
   next: 13.4.1_3j7hb26pwgm6spbxoejtjx6xja
   pino-pretty: 10.0.0
@@ -5333,6 +5335,13 @@ packages:
     engines: {node: '>= 6'}
     dev: false
     optional: true
+
+  /date-fns/2.30.0:
+    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
+    engines: {node: '>=0.11'}
+    dependencies:
+      '@babel/runtime': 7.21.5
+    dev: false
 
   /dateformat/4.6.3:
     resolution: {integrity: sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==}

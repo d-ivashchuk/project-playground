@@ -38,31 +38,33 @@ export default function Page() {
 
   return (
     <Box>
-      <Button
-        leftIcon={<FaPlusCircle />}
-        variant="gradient"
-        gradient={{ from: 'teal', to: 'lime', deg: 105 }}
-        onClick={() => {
-          createJobMutation.mutate(
-            {
-              body: {
-                name: 'New job',
-                userId: user.id,
-                schedule: '* * * * *', // every minute
-                url: 'https://testimonial.to',
-              },
-            },
-            {
-              onSuccess: () => {
-                queryClient.invalidateQueries(['jobs', user?.id]);
-              },
-            }
-          );
-        }}
-      >
-        Add new job
-      </Button>
-      <Title mb={8}>Jobs</Title>
+      <Group spacing="sm" mb="md">
+        <Title mb={8}>Jobs</Title>
+        <Button
+          leftIcon={<FaPlusCircle />}
+          variant="gradient"
+          gradient={{ from: 'teal', to: 'lime', deg: 105 }}
+          onClick={() => {
+            // createJobMutation.mutate(
+            //   {
+            //     body: {
+            //       name: 'New job',
+            //       userId: user.id,
+            //       schedule: '* * * * *', // every minute
+            //       url: 'https://testimonial.to',
+            //     },
+            //   },
+            //   {
+            //     onSuccess: () => {
+            //       queryClient.invalidateQueries(['jobs', user?.id]);
+            //     },
+            //   }
+            // );
+          }}
+        >
+          Add new job
+        </Button>
+      </Group>
       {jobsQuery.isLoading ? (
         <div>Loading...</div>
       ) : (

@@ -44,7 +44,7 @@ model Job {
 }
 
 model Run {
-  id             Int       @id @default(autoincrement())
+  id             String    @id @default(cuid())
   jobId          String
   job            Job       @relation(fields: [jobId], references: [id])
   status         String // E.g. "running", "completed", "failed"
