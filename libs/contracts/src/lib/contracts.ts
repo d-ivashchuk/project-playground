@@ -1,10 +1,4 @@
-import {
-  JobCreateInputSchema,
-  JobSchema,
-  PostCreateInputSchema,
-  PostSchema,
-  PostUpdateInputSchema,
-} from './prisma-generated-zod';
+import { JobCreateInputSchema, JobSchema } from './prisma-generated-zod';
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 
@@ -18,32 +12,6 @@ export interface Post {
 }
 
 const c = initContract();
-
-export const apiBlog = c.router({
-  createPost: {
-    method: 'POST',
-    path: '/posts',
-    responses: {
-      201: PostSchema,
-    },
-    body: PostCreateInputSchema,
-    summary: 'Create a post',
-  },
-  updatePost: {
-    method: 'PATCH',
-    path: `/posts/:id`,
-    responses: { 200: PostSchema },
-    body: PostUpdateInputSchema,
-    summary: 'Update a post',
-  },
-
-  fetchAllPosts: {
-    method: 'GET',
-    path: `/posts`,
-    responses: { 200: z.array(PostSchema) },
-    summary: 'Fetch all posts',
-  },
-});
 
 export const apiJobs = c.router({
   createJob: {

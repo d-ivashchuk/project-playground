@@ -5,6 +5,9 @@ import { Job } from '@prisma/client';
 import { v2 as cloudinary } from 'cloudinary';
 import { SHA256 } from 'crypto-js';
 import { Readable } from 'stream';
+import { PNG } from 'pngjs';
+import pixelmatch from 'pixelmatch';
+import axios from 'axios';
 
 @Injectable()
 export class VisualService implements OnModuleInit {
@@ -92,18 +95,36 @@ export class VisualService implements OnModuleInit {
 
     this.logger.log(`"getJobScreenshot" screenshotUrl: ${screenshotUrl}`);
 
-    const createdRun = await this.prisma.run.create({
-      data: {
-        jobId: job.id,
-        screenshotUrl,
-        status: 'SUCCESS',
-        startedAt: new Date(),
-        endedAt: new Date(),
-      },
+    // Get the up-to-date job from the database, instead of using the one passed in on creation of Bull job
+    const upToDateJob = await this.prisma.job.findUnique({
+      where: { id: job.id },
     });
 
-    this.logger.log(`"getJobScreenshot" createdRun: ${createdRun.id}`);
+    if (upToDateJob?.baselineImageUrl) {
+      this.logger.log(
+        `"getJobScreenshot" baselineImageUrl found: ${upToDateJob.baselineImageUrl}`
+      );
+      this.logger.log(`"getJobScreenshot" comparing images for job ${job.id}`);
 
+      const baselineImageBuffer = await this.downloadImage(
+        upToDateJob.baselineImageUrl
+      );
+
+      const { diffUrl, diffPercentage, diffPixels } = await this.compareImages({
+        baselineImageBuffer,
+        newImageBuffer: buffer,
+      });
+
+      this.createRunAndUpdateJob({
+        job,
+        screenshotUrl,
+        diffUrl,
+        diffPercentage,
+        diffPixels,
+      });
+    } else {
+      this.createRunAndUpdateJob({ job, screenshotUrl });
+    }
     await page.close();
   }
 
@@ -173,5 +194,99 @@ export class VisualService implements OnModuleInit {
         throw error;
       }
     }
+  }
+
+  async compareImages({
+    baselineImageBuffer,
+    newImageBuffer,
+  }: {
+    baselineImageBuffer: Buffer;
+    newImageBuffer: Buffer;
+  }): Promise<{ diffUrl: string; diffPercentage: number; diffPixels: number }> {
+    this.logger.log('"compareImages" runs');
+
+    // Convert the buffers to PNG images
+    const img1 = PNG.sync.read(baselineImageBuffer);
+    const img2 = PNG.sync.read(newImageBuffer);
+
+    // Create a new PNG to hold the diff image
+    const { width, height } = img1;
+    const diff = new PNG({ width, height });
+
+    // Compare the images
+    const diffPixels = pixelmatch(
+      img1.data,
+      img2.data,
+      diff.data,
+      width,
+      height,
+      { threshold: 0.1 }
+    );
+
+    // Calculate the percentage of different pixels
+    const totalPixels = width * height;
+    const diffPercentage = (diffPixels / totalPixels) * 100;
+
+    // Convert the diff image back to a buffer
+    const buffer = PNG.sync.write(diff);
+
+    // Upload the diff image to Cloudinary
+    const diffUrl = await this.uploadImageToCloudinary({ buffer });
+
+    // Return the diff image buffer and diff percentage
+    return { diffPercentage, diffPixels, diffUrl };
+  }
+  async downloadImage(url: string): Promise<Buffer> {
+    this.logger.log(`"downloadImage" runs for url: ${url}`);
+    const response = await axios.get(url, {
+      responseType: 'arraybuffer', // This is important. It tells axios to retrieve binary data
+    });
+    return Buffer.from(response.data, 'binary');
+  }
+
+  async createRunAndUpdateJob({
+    job,
+    screenshotUrl,
+    diffUrl,
+    diffPixels,
+    diffPercentage,
+  }: {
+    job: Job;
+    screenshotUrl: string;
+    diffUrl?: string;
+    diffPixels?: number;
+    diffPercentage?: number;
+  }): Promise<void> {
+    const getStatus = (
+      diffUrl: string | undefined
+    ): 'DIFFERENCE' | 'NO_CHANGE' => {
+      if (diffUrl) {
+        return 'DIFFERENCE';
+      } else {
+        return 'NO_CHANGE';
+      }
+    };
+    const createdRun = await this.prisma.run.create({
+      data: {
+        jobId: job.id,
+        screenshotUrl,
+        diffUrl,
+        diffPixels,
+        diffPercentage,
+        status: getStatus(diffUrl),
+        startedAt: new Date(),
+        endedAt: new Date(),
+      },
+    });
+
+    const updatedJob = await this.prisma.job.update({
+      where: { id: job.id },
+      data: { baselineImageUrl: screenshotUrl },
+    });
+
+    this.logger.log(`"getJobScreenshot" createdRun: ${createdRun.id}`);
+    this.logger.log(
+      `"getJobScreenshot" baseline updated for: ${updatedJob.id}`
+    );
   }
 }

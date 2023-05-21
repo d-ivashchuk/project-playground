@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { LoggerModule } from 'nestjs-pino';
 
 import { PrismaService } from './prisma.service';
-import { PostService } from './post.service';
 import { ScheduleModule } from '../schedule/schedule.module';
 import { VisualModule } from '../visual/visual.module';
 
@@ -29,6 +28,6 @@ import { VisualModule } from '../visual/visual.module';
     }),
   ],
   controllers: [],
-  providers: [PrismaService, PostService],
+  providers: [PrismaService],
 })
 export class AppModule {}
