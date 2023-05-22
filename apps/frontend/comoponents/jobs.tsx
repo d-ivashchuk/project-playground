@@ -4,7 +4,6 @@ import { useUser } from '@clerk/nextjs';
 import {
   ActionIcon,
   Box,
-  Button,
   Card,
   Group,
   Stack,
@@ -12,9 +11,9 @@ import {
   Title,
 } from '@mantine/core';
 import { client } from '../client';
-import { FaPlusCircle } from 'react-icons/fa';
 import { RiDeleteBin2Line } from 'react-icons/ri';
 import { useQueryClient } from '@tanstack/react-query';
+import { AddNewJobModal } from './add-new-job-modal';
 
 export default function Page() {
   const { user, isLoaded } = useUser();
@@ -33,37 +32,13 @@ export default function Page() {
       enabled: !!user?.id,
     }
   );
-  const createJobMutation = client.apiJobs.createJob.useMutation();
   const deleteJobMutation = client.apiJobs.deleteJobById.useMutation();
 
   return (
     <Box>
       <Group spacing="sm" mb="md">
         <Title mb={8}>Jobs</Title>
-        <Button
-          leftIcon={<FaPlusCircle />}
-          variant="gradient"
-          gradient={{ from: 'teal', to: 'lime', deg: 105 }}
-          onClick={() => {
-            // createJobMutation.mutate(
-            //   {
-            //     body: {
-            //       name: 'New job',
-            //       userId: user.id,
-            //       schedule: '* * * * *', // every minute
-            //       url: 'https://testimonial.to',
-            //     },
-            //   },
-            //   {
-            //     onSuccess: () => {
-            //       queryClient.invalidateQueries(['jobs', user?.id]);
-            //     },
-            //   }
-            // );
-          }}
-        >
-          Add new job
-        </Button>
+        <AddNewJobModal />
       </Group>
       {jobsQuery.isLoading ? (
         <div>Loading...</div>
