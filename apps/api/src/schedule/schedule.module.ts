@@ -14,9 +14,27 @@ import { VisualModule } from '../visual/visual.module';
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        redis: configService.get('REDIS_URL'),
-      }),
+      useFactory: async (configService: ConfigService) => {
+        try {
+          const redisHost = configService.get('REDIS_HOST');
+          const redisPort = configService.get('REDIS_PORT');
+          const redisPassword = configService.get('REDIS_PASSWORD');
+          const redisUsername = configService.get('REDIS_USERNAME');
+
+          console.log(`Connecting to Redis at ${redisHost}:${redisPort}`);
+          return {
+            redis: {
+              host: redisHost,
+              password: redisPassword,
+              port: Number(redisPort),
+              username: redisUsername,
+            },
+          };
+        } catch (error) {
+          console.error('Error setting up Bull queues:', error);
+          throw error;
+        }
+      },
     }),
     BullModule.registerQueue({
       name: 'jobQueue',
