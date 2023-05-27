@@ -51,81 +51,88 @@ export class VisualService implements OnModuleInit {
   }
 
   async getJobScreenshot(job: Job) {
-    await this.browserPromise;
+    try {
+      await this.browserPromise;
 
-    if (!job || !job.url) {
-      this.logger.error('Job or job URL is missing');
-      throw new Error('Job or job URL is missing');
-    }
+      if (!job || !job.url) {
+        this.logger.error('Job or job URL is missing');
+        throw new Error('Job or job URL is missing');
+      }
 
-    const isValidUrl = this.validateURL(job.url);
-    if (!isValidUrl) {
-      this.logger.error(`Invalid URL for job ${job.id}`);
-      throw new Error(`Invalid URL: ${job.url}`);
-    }
+      const isValidUrl = this.validateURL(job.url);
+      if (!isValidUrl) {
+        this.logger.error(`Invalid URL for job ${job.id}`);
+        throw new Error(`Invalid URL: ${job.url}`);
+      }
 
-    const page = await this.browser.newPage();
-    let buffer: Buffer | null = null;
+      const page = await this.browser.newPage();
+      let buffer: Buffer | null = null;
 
-    for (let attempt = 0; attempt < 3; attempt++) {
-      try {
-        await page.goto(job.url);
-        buffer = await page.screenshot({ fullPage: true });
-        break; // If screenshot is successful, break the loop
-      } catch (error) {
-        this.logger.error(
-          `Attempt ${attempt + 1} - Error taking screenshot: ${error}`
-        );
-        if (attempt === 2) {
-          // If all 3 attempts fail, throw error
-          throw error;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          await page.goto(job.url);
+          buffer = await page.screenshot({ fullPage: true });
+          break; // If screenshot is successful, break the loop
+        } catch (error) {
+          this.logger.error(
+            `Attempt ${attempt + 1} - Error taking screenshot: ${error}`
+          );
+          if (attempt === 2) {
+            // If all 3 attempts fail, throw error
+            throw error;
+          }
         }
       }
-    }
 
-    if (!buffer) {
-      throw new Error('Failed to capture screenshot after all attempts');
-    }
+      if (!buffer) {
+        throw new Error('Failed to capture screenshot after all attempts');
+      }
 
-    this.logger.log(
-      `"getJobScreenshot" successfully generated buffer for job ${job.id}`
-    );
-
-    const screenshotUrl = await this.uploadImageToCloudinary({ buffer });
-
-    this.logger.log(`"getJobScreenshot" screenshotUrl: ${screenshotUrl}`);
-
-    // Get the up-to-date job from the database, instead of using the one passed in on creation of Bull job
-    const upToDateJob = await this.prisma.job.findUnique({
-      where: { id: job.id },
-    });
-
-    if (upToDateJob?.baselineImageUrl) {
       this.logger.log(
-        `"getJobScreenshot" baselineImageUrl found: ${upToDateJob.baselineImageUrl}`
-      );
-      this.logger.log(`"getJobScreenshot" comparing images for job ${job.id}`);
-
-      const baselineImageBuffer = await this.downloadImage(
-        upToDateJob.baselineImageUrl
+        `"getJobScreenshot" successfully generated buffer for job ${job.id}`
       );
 
-      const { diffUrl, diffPercentage, diffPixels } = await this.compareImages({
-        baselineImageBuffer,
-        newImageBuffer: buffer,
+      const screenshotUrl = await this.uploadImageToCloudinary({ buffer });
+
+      this.logger.log(`"getJobScreenshot" screenshotUrl: ${screenshotUrl}`);
+
+      // Get the up-to-date job from the database, instead of using the one passed in on creation of Bull job
+      const upToDateJob = await this.prisma.job.findUnique({
+        where: { id: job.id },
       });
 
-      this.createRunAndUpdateJob({
-        job,
-        screenshotUrl,
-        diffUrl,
-        diffPercentage,
-        diffPixels,
-      });
-    } else {
-      this.createRunAndUpdateJob({ job, screenshotUrl });
+      if (upToDateJob?.baselineImageUrl) {
+        this.logger.log(
+          `"getJobScreenshot" baselineImageUrl found: ${upToDateJob.baselineImageUrl}`
+        );
+        this.logger.log(
+          `"getJobScreenshot" comparing images for job ${job.id}`
+        );
+
+        const baselineImageBuffer = await this.downloadImage(
+          upToDateJob.baselineImageUrl
+        );
+
+        const { diffUrl, diffPercentage, diffPixels } =
+          await this.compareImages({
+            baselineImageBuffer,
+            newImageBuffer: buffer,
+          });
+
+        this.createRunAndUpdateJob({
+          job,
+          screenshotUrl,
+          diffUrl,
+          diffPercentage,
+          diffPixels,
+        });
+      } else {
+        this.createRunAndUpdateJob({ job, screenshotUrl });
+      }
+      await page.close();
+    } catch (error) {
+      this.logger.error(`"getJobScreenshot" error: ${error}`);
     }
-    await page.close();
   }
 
   private validateURL(url: string): boolean {
@@ -257,36 +264,40 @@ export class VisualService implements OnModuleInit {
     diffPixels?: number;
     diffPercentage?: number;
   }): Promise<void> {
-    const getStatus = (
-      diffUrl: string | undefined
-    ): 'DIFFERENCE' | 'NO_CHANGE' => {
-      if (diffUrl) {
-        return 'DIFFERENCE';
-      } else {
-        return 'NO_CHANGE';
-      }
-    };
-    const createdRun = await this.prisma.run.create({
-      data: {
-        jobId: job.id,
-        screenshotUrl,
-        diffUrl,
-        diffPixels,
-        diffPercentage,
-        status: getStatus(diffUrl),
-        startedAt: new Date(),
-        endedAt: new Date(),
-      },
-    });
+    try {
+      const getStatus = (
+        diffUrl: string | undefined
+      ): 'DIFFERENCE' | 'NO_CHANGE' => {
+        if (diffUrl) {
+          return 'DIFFERENCE';
+        } else {
+          return 'NO_CHANGE';
+        }
+      };
+      const createdRun = await this.prisma.run.create({
+        data: {
+          jobId: job.id,
+          screenshotUrl,
+          diffUrl,
+          diffPixels,
+          diffPercentage,
+          status: getStatus(diffUrl),
+          startedAt: new Date(),
+          endedAt: new Date(),
+        },
+      });
 
-    const updatedJob = await this.prisma.job.update({
-      where: { id: job.id },
-      data: { baselineImageUrl: screenshotUrl },
-    });
+      const updatedJob = await this.prisma.job.update({
+        where: { id: job.id },
+        data: { baselineImageUrl: screenshotUrl },
+      });
 
-    this.logger.log(`"getJobScreenshot" createdRun: ${createdRun.id}`);
-    this.logger.log(
-      `"getJobScreenshot" baseline updated for: ${updatedJob.id}`
-    );
+      this.logger.log(`"createRunAndUpdateJob" createdRun: ${createdRun.id}`);
+      this.logger.log(
+        `"createRunAndUpdateJob" baseline updated for: ${updatedJob.id}`
+      );
+    } catch (error) {
+      this.logger.error(`"createRunAndUpdateJob" error: ${error}`);
+    }
   }
 }

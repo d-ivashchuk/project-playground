@@ -10,7 +10,7 @@ import type { Prisma } from '@prisma/client';
 // ENUMS
 /////////////////////////////////////////
 
-export const JobScalarFieldEnumSchema = z.enum(['id','userId','name','schedule','waitBeforeScreenshot','actionBeforeScreenshot','differenceThreshold','createdAt','updatedAt','url','baselineImageUrl','projectId']);
+export const JobScalarFieldEnumSchema = z.enum(['id','userId','name','schedule','waitBeforeScreenshot','actionBeforeScreenshot','differenceThreshold','createdAt','updatedAt','url','isPaused','baselineImageUrl','projectId']);
 
 export const ProjectScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt']);
 
@@ -53,6 +53,7 @@ export const JobSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   url: z.string(),
+  isPaused: z.boolean(),
   baselineImageUrl: z.string().nullable(),
   projectId: z.string().nullable(),
 })
@@ -144,6 +145,7 @@ export const JobSelectSchema: z.ZodType<Prisma.JobSelect> = z.object({
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
   url: z.boolean().optional(),
+  isPaused: z.boolean().optional(),
   baselineImageUrl: z.boolean().optional(),
   projectId: z.boolean().optional(),
   runs: z.union([z.boolean(),z.lazy(() => RunFindManyArgsSchema)]).optional(),
@@ -238,6 +240,7 @@ export const JobWhereInputSchema: z.ZodType<Prisma.JobWhereInput> = z.object({
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   url: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  isPaused: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   baselineImageUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   projectId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   runs: z.lazy(() => RunListRelationFilterSchema).optional(),
@@ -255,6 +258,7 @@ export const JobOrderByWithRelationInputSchema: z.ZodType<Prisma.JobOrderByWithR
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
+  isPaused: z.lazy(() => SortOrderSchema).optional(),
   baselineImageUrl: z.lazy(() => SortOrderSchema).optional(),
   projectId: z.lazy(() => SortOrderSchema).optional(),
   runs: z.lazy(() => RunOrderByRelationAggregateInputSchema).optional(),
@@ -276,6 +280,7 @@ export const JobOrderByWithAggregationInputSchema: z.ZodType<Prisma.JobOrderByWi
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
+  isPaused: z.lazy(() => SortOrderSchema).optional(),
   baselineImageUrl: z.lazy(() => SortOrderSchema).optional(),
   projectId: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => JobCountOrderByAggregateInputSchema).optional(),
@@ -299,6 +304,7 @@ export const JobScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.JobScalar
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   url: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  isPaused: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
   baselineImageUrl: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   projectId: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
@@ -432,6 +438,7 @@ export const JobCreateInputSchema: z.ZodType<Prisma.JobCreateInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   url: z.string(),
+  isPaused: z.boolean().optional(),
   baselineImageUrl: z.string().optional().nullable(),
   runs: z.lazy(() => RunCreateNestedManyWithoutJobInputSchema).optional(),
   project: z.lazy(() => ProjectCreateNestedOneWithoutJobsInputSchema).optional()
@@ -448,6 +455,7 @@ export const JobUncheckedCreateInputSchema: z.ZodType<Prisma.JobUncheckedCreateI
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   url: z.string(),
+  isPaused: z.boolean().optional(),
   baselineImageUrl: z.string().optional().nullable(),
   projectId: z.string().optional().nullable(),
   runs: z.lazy(() => RunUncheckedCreateNestedManyWithoutJobInputSchema).optional()
@@ -464,6 +472,7 @@ export const JobUpdateInputSchema: z.ZodType<Prisma.JobUpdateInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isPaused: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   baselineImageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   runs: z.lazy(() => RunUpdateManyWithoutJobNestedInputSchema).optional(),
   project: z.lazy(() => ProjectUpdateOneWithoutJobsNestedInputSchema).optional()
@@ -480,6 +489,7 @@ export const JobUncheckedUpdateInputSchema: z.ZodType<Prisma.JobUncheckedUpdateI
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isPaused: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   baselineImageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   projectId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   runs: z.lazy(() => RunUncheckedUpdateManyWithoutJobNestedInputSchema).optional()
@@ -496,6 +506,7 @@ export const JobCreateManyInputSchema: z.ZodType<Prisma.JobCreateManyInput> = z.
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   url: z.string(),
+  isPaused: z.boolean().optional(),
   baselineImageUrl: z.string().optional().nullable(),
   projectId: z.string().optional().nullable()
 }).strict();
@@ -511,6 +522,7 @@ export const JobUpdateManyMutationInputSchema: z.ZodType<Prisma.JobUpdateManyMut
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isPaused: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   baselineImageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
@@ -525,6 +537,7 @@ export const JobUncheckedUpdateManyInputSchema: z.ZodType<Prisma.JobUncheckedUpd
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isPaused: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   baselineImageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   projectId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
@@ -738,6 +751,11 @@ export const FloatNullableFilterSchema: z.ZodType<Prisma.FloatNullableFilter> = 
   not: z.union([ z.number(),z.lazy(() => NestedFloatNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
+export const BoolFilterSchema: z.ZodType<Prisma.BoolFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
+}).strict();
+
 export const RunListRelationFilterSchema: z.ZodType<Prisma.RunListRelationFilter> = z.object({
   every: z.lazy(() => RunWhereInputSchema).optional(),
   some: z.lazy(() => RunWhereInputSchema).optional(),
@@ -764,6 +782,7 @@ export const JobCountOrderByAggregateInputSchema: z.ZodType<Prisma.JobCountOrder
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
+  isPaused: z.lazy(() => SortOrderSchema).optional(),
   baselineImageUrl: z.lazy(() => SortOrderSchema).optional(),
   projectId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -784,6 +803,7 @@ export const JobMaxOrderByAggregateInputSchema: z.ZodType<Prisma.JobMaxOrderByAg
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
+  isPaused: z.lazy(() => SortOrderSchema).optional(),
   baselineImageUrl: z.lazy(() => SortOrderSchema).optional(),
   projectId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -799,6 +819,7 @@ export const JobMinOrderByAggregateInputSchema: z.ZodType<Prisma.JobMinOrderByAg
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
+  isPaused: z.lazy(() => SortOrderSchema).optional(),
   baselineImageUrl: z.lazy(() => SortOrderSchema).optional(),
   projectId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -856,6 +877,14 @@ export const FloatNullableWithAggregatesFilterSchema: z.ZodType<Prisma.FloatNull
   _sum: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedFloatNullableFilterSchema).optional()
+}).strict();
+
+export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregatesFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
+  _max: z.lazy(() => NestedBoolFilterSchema).optional()
 }).strict();
 
 export const DateTimeNullableFilterSchema: z.ZodType<Prisma.DateTimeNullableFilter> = z.object({
@@ -1024,6 +1053,10 @@ export const NullableFloatFieldUpdateOperationsInputSchema: z.ZodType<Prisma.Nul
   divide: z.number().optional()
 }).strict();
 
+export const BoolFieldUpdateOperationsInputSchema: z.ZodType<Prisma.BoolFieldUpdateOperationsInput> = z.object({
+  set: z.boolean().optional()
+}).strict();
+
 export const RunUpdateManyWithoutJobNestedInputSchema: z.ZodType<Prisma.RunUpdateManyWithoutJobNestedInput> = z.object({
   create: z.union([ z.lazy(() => RunCreateWithoutJobInputSchema),z.lazy(() => RunCreateWithoutJobInputSchema).array(),z.lazy(() => RunUncheckedCreateWithoutJobInputSchema),z.lazy(() => RunUncheckedCreateWithoutJobInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => RunCreateOrConnectWithoutJobInputSchema),z.lazy(() => RunCreateOrConnectWithoutJobInputSchema).array() ]).optional(),
@@ -1183,6 +1216,11 @@ export const NestedFloatNullableFilterSchema: z.ZodType<Prisma.NestedFloatNullab
   not: z.union([ z.number(),z.lazy(() => NestedFloatNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
+export const NestedBoolFilterSchema: z.ZodType<Prisma.NestedBoolFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
+}).strict();
+
 export const NestedIntNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntNullableWithAggregatesFilter> = z.object({
   equals: z.number().optional().nullable(),
   in: z.union([ z.number().array(),z.number() ]).optional().nullable(),
@@ -1232,6 +1270,14 @@ export const NestedFloatNullableWithAggregatesFilterSchema: z.ZodType<Prisma.Nes
   _max: z.lazy(() => NestedFloatNullableFilterSchema).optional()
 }).strict();
 
+export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWithAggregatesFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
+  _max: z.lazy(() => NestedBoolFilterSchema).optional()
+}).strict();
+
 export const NestedDateTimeNullableFilterSchema: z.ZodType<Prisma.NestedDateTimeNullableFilter> = z.object({
   equals: z.coerce.date().optional().nullable(),
   in: z.union([ z.coerce.date().array(),z.coerce.date() ]).optional().nullable(),
@@ -1268,6 +1314,7 @@ export const JobCreateWithoutProjectInputSchema: z.ZodType<Prisma.JobCreateWitho
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   url: z.string(),
+  isPaused: z.boolean().optional(),
   baselineImageUrl: z.string().optional().nullable(),
   runs: z.lazy(() => RunCreateNestedManyWithoutJobInputSchema).optional()
 }).strict();
@@ -1283,6 +1330,7 @@ export const JobUncheckedCreateWithoutProjectInputSchema: z.ZodType<Prisma.JobUn
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   url: z.string(),
+  isPaused: z.boolean().optional(),
   baselineImageUrl: z.string().optional().nullable(),
   runs: z.lazy(() => RunUncheckedCreateNestedManyWithoutJobInputSchema).optional()
 }).strict();
@@ -1327,6 +1375,7 @@ export const JobScalarWhereInputSchema: z.ZodType<Prisma.JobScalarWhereInput> = 
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   url: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  isPaused: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   baselineImageUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   projectId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
@@ -1443,6 +1492,7 @@ export const JobCreateWithoutRunsInputSchema: z.ZodType<Prisma.JobCreateWithoutR
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   url: z.string(),
+  isPaused: z.boolean().optional(),
   baselineImageUrl: z.string().optional().nullable(),
   project: z.lazy(() => ProjectCreateNestedOneWithoutJobsInputSchema).optional()
 }).strict();
@@ -1458,6 +1508,7 @@ export const JobUncheckedCreateWithoutRunsInputSchema: z.ZodType<Prisma.JobUnche
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   url: z.string(),
+  isPaused: z.boolean().optional(),
   baselineImageUrl: z.string().optional().nullable(),
   projectId: z.string().optional().nullable()
 }).strict();
@@ -1483,6 +1534,7 @@ export const JobUpdateWithoutRunsInputSchema: z.ZodType<Prisma.JobUpdateWithoutR
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isPaused: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   baselineImageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   project: z.lazy(() => ProjectUpdateOneWithoutJobsNestedInputSchema).optional()
 }).strict();
@@ -1498,6 +1550,7 @@ export const JobUncheckedUpdateWithoutRunsInputSchema: z.ZodType<Prisma.JobUnche
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isPaused: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   baselineImageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   projectId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
@@ -1513,6 +1566,7 @@ export const JobCreateManyProjectInputSchema: z.ZodType<Prisma.JobCreateManyProj
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   url: z.string(),
+  isPaused: z.boolean().optional(),
   baselineImageUrl: z.string().optional().nullable()
 }).strict();
 
@@ -1527,6 +1581,7 @@ export const JobUpdateWithoutProjectInputSchema: z.ZodType<Prisma.JobUpdateWitho
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isPaused: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   baselineImageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   runs: z.lazy(() => RunUpdateManyWithoutJobNestedInputSchema).optional()
 }).strict();
@@ -1542,6 +1597,7 @@ export const JobUncheckedUpdateWithoutProjectInputSchema: z.ZodType<Prisma.JobUn
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isPaused: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   baselineImageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   runs: z.lazy(() => RunUncheckedUpdateManyWithoutJobNestedInputSchema).optional()
 }).strict();
@@ -1557,6 +1613,7 @@ export const JobUncheckedUpdateManyWithoutJobsInputSchema: z.ZodType<Prisma.JobU
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isPaused: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   baselineImageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 

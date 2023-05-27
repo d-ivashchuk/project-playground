@@ -42,6 +42,49 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
     return { status: 201 as const, body: response };
   }
 
+  @TsRest(c.updateJob)
+  async updateJob(
+    @TsRestRequest() { body, params }: RequestShapes['updateJob']
+  ): Promise<ResponseShapes['updateJob']> {
+    try {
+      this.logger.log(`Updating job: ${params.id}`);
+      const existingJob = await this.prisma.job.findUnique({
+        where: {
+          id: params.id,
+        },
+      });
+
+      // If existing job doesn't exist, then return an error
+      if (!existingJob) {
+        this.logger.error(`Job not found: ${params.id}`);
+        return { status: 404 as const, body: 'Job not found.' };
+      }
+
+      // Update the job in the database
+      const updatedJob = await this.prisma.job.update({
+        where: {
+          id: params.id,
+        },
+        data: body,
+      });
+
+      // If the schedule has changed, then remove the existing job and add the new job to the queue
+      if (existingJob.schedule !== updatedJob.schedule) {
+        this.logger.log(`Updating schedule for job: ${params.id}`);
+        await this.scheduleService.deleteJob({
+          jobId: existingJob.id,
+          schedule: existingJob.schedule,
+        });
+        await this.scheduleService.addJob(updatedJob);
+      }
+
+      return { status: 200 as const, body: updatedJob };
+    } catch (error) {
+      this.logger.error(error);
+      return { status: 400 as const, body: 'Update operation failed.' };
+    }
+  }
+
   @TsRest(c.fetchAllJobsByProjectId)
   async fetchAllJobsByProjectId(
     @TsRestRequest() { params }: RequestShapes['fetchAllJobsByProjectId']
@@ -75,21 +118,27 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
   async deleteJobById(
     @TsRestRequest() { params }: RequestShapes['deleteJobById']
   ): Promise<ResponseShapes['deleteJobById']> {
-    const response = await this.prisma.job.delete({
-      where: {
-        id: params.id,
-      },
-    });
-
-    if (response.id) {
-      this.logger.log(`Deleting job from queue: ${response.id}`);
-      await this.scheduleService.deleteJob({
-        jobId: response.id,
-        schedule: response.schedule,
+    try {
+      this.logger.log(`Deleting job: ${params.id}`);
+      const response = await this.prisma.job.delete({
+        where: {
+          id: params.id,
+        },
       });
-    }
 
-    return { status: 201 as const, body: response };
+      if (response.id) {
+        this.logger.log(`Deleting job from queue: ${response.id}`);
+        await this.scheduleService.deleteJob({
+          jobId: response.id,
+          schedule: response.schedule,
+        });
+      }
+
+      return { status: 201 as const, body: response };
+    } catch (error) {
+      this.logger.error(error);
+      return { status: 400 as const, body: error };
+    }
   }
 
   @TsRest(c.fetchAllRunsByJobId)

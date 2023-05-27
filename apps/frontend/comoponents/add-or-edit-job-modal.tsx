@@ -5,18 +5,19 @@ import {
   Group,
   Modal,
   Select,
-  Text,
   Stack,
   TextInput,
   useMantineTheme,
   Space,
+  ActionIcon,
 } from '@mantine/core';
 import { z } from 'zod';
-import { FaPlusCircle } from 'react-icons/fa';
+import { FaEdit, FaPlusCircle } from 'react-icons/fa';
 import { useUser } from '@clerk/nextjs';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm, zodResolver } from '@mantine/form';
 import { client } from '../client';
+import { Job } from '@prisma/client';
 
 type FormValues = {
   urlToMonitor: string;
@@ -26,13 +27,30 @@ type FormValues = {
   name: string;
 };
 
-export const AddNewJobModal = () => {
+export const cronJobScheduleOptions = [
+  { value: '* * * * *', label: 'Every Minute' },
+  { value: '*/5 * * * *', label: 'Every 5 Minutes' },
+  { value: '*/30 * * * *', label: 'Every 30 Minutes' },
+  { value: '0 * * * *', label: 'Every Hour' },
+  { value: '0 */6 * * *', label: 'Every 6 Hours' },
+  { value: '0 */12 * * *', label: 'Every 12 Hours' },
+  { value: '0 0 * * *', label: 'Every Day' },
+  { value: '0 0 * * 0', label: 'Every Week' },
+  { value: '0 0 1 * *', label: 'Every Month' },
+];
+
+export const AddOrEditJobModal = ({
+  jobToEdit = null,
+}: {
+  jobToEdit?: Job | null;
+}) => {
   const queryClient = useQueryClient();
   const [opened, { open, close }] = useDisclosure(false);
   const { user } = useUser();
 
   const theme = useMantineTheme();
   const createJobMutation = client.apiJobs.createJob.useMutation();
+  const updateJobMutation = client.apiJobs.updateJob.useMutation(); // added update mutation
 
   const formSchema = z.object({
     urlToMonitor: z.string().refine(
@@ -56,18 +74,18 @@ export const AddNewJobModal = () => {
 
   const form = useForm({
     initialValues: {
-      urlToMonitor: '',
-      cronJobSchedule: '0 * * * *',
-      sensitivity: '0.01',
-      size: 'full',
-      name: 'New Job',
+      urlToMonitor: jobToEdit ? jobToEdit.url : '',
+      cronJobSchedule: jobToEdit ? jobToEdit.schedule : '0 * * * *',
+      name: jobToEdit ? jobToEdit.name : 'New Job',
+      sensitivity: jobToEdit ? jobToEdit.differenceThreshold : '0.01',
+      // size: jobToEdit ? jobToEdit.size : 'full',
     },
     validate: zodResolver(formSchema),
   });
 
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = async (values: FormValues) => {
     if (user) {
-      console.log({
+      const data = {
         body: {
           name: values.name,
           userId: user.id,
@@ -75,25 +93,23 @@ export const AddNewJobModal = () => {
           url: values.urlToMonitor.includes('://')
             ? values.urlToMonitor
             : 'https://' + values.urlToMonitor,
+          differenceThreshold: Number(values.sensitivity),
         },
-      });
-      createJobMutation.mutate(
-        {
-          body: {
-            name: values.name,
-            userId: user.id,
-            schedule: values.cronJobSchedule,
-            url: values.urlToMonitor.includes('://')
-              ? values.urlToMonitor
-              : 'https://' + values.urlToMonitor,
+      };
+      if (jobToEdit) {
+        // Update existing job
+        await updateJobMutation.mutateAsync({
+          params: {
+            id: jobToEdit.id, // assume `jobToEdit` has an `id` field
           },
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries(['jobs', user?.id]);
-          },
-        }
-      );
+          ...data,
+        });
+      } else {
+        // Create new job
+        await createJobMutation.mutateAsync(data);
+      }
+      queryClient.invalidateQueries(['jobs', user?.id]);
+      close();
     }
   };
 
@@ -103,7 +119,7 @@ export const AddNewJobModal = () => {
         size="100%"
         opened={opened}
         onClose={close}
-        title="Create new job"
+        title={jobToEdit ? 'Edit job' : 'Create new job'}
         overlayProps={{
           color:
             theme.colorScheme === 'dark'
@@ -132,6 +148,13 @@ export const AddNewJobModal = () => {
               mt="md"
               {...form.getInputProps('urlToMonitor')}
             />
+            <TextInput
+              size="md"
+              data-autofocus
+              label="Name"
+              placeholder="Provide a name for the job (to identify it easily later)"
+              {...form.getInputProps('name')}
+            />
 
             <Select
               withinPortal
@@ -140,17 +163,7 @@ export const AddNewJobModal = () => {
               defaultValue="0 * * * *"
               size="md"
               {...form.getInputProps('cronJobSchedule')}
-              data={[
-                { value: '* * * * *', label: 'Every Minute' },
-                { value: '*/5 * * * *', label: 'Every 5 Minutes' },
-                { value: '*/30 * * * *', label: 'Every 30 Minutes' },
-                { value: '0 * * * *', label: 'Every Hour' },
-                { value: '0 */6 * * *', label: 'Every 6 Hours' },
-                { value: '0 */12 * * *', label: 'Every 12 Hours' },
-                { value: '0 0 * * *', label: 'Every Day' },
-                { value: '0 0 * * 0', label: 'Every Week' },
-                { value: '0 0 1 * *', label: 'Every Month' },
-              ]}
+              data={cronJobScheduleOptions}
             />
 
             <Group>
@@ -192,13 +205,16 @@ export const AddNewJobModal = () => {
               gradient={{ from: 'teal', to: 'lime', deg: 105 }}
               type="submit"
             >
-              Add new job
+              {jobToEdit ? 'Update job' : 'Add new job'}
             </Button>
           </Flex>
         </form>
       </Modal>
-
-      <Group position="center">
+      {jobToEdit ? (
+        <ActionIcon>
+          <FaEdit onClick={open} size="1.125rem" />
+        </ActionIcon>
+      ) : (
         <Button
           leftIcon={<FaPlusCircle />}
           variant="gradient"
@@ -207,7 +223,7 @@ export const AddNewJobModal = () => {
         >
           Add new job
         </Button>
-      </Group>
+      )}
     </>
   );
 };

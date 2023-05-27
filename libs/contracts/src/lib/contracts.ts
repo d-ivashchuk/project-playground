@@ -1,6 +1,7 @@
 import {
   JobCreateInputSchema,
   JobSchema,
+  JobUpdateInputSchema,
   RunSchema,
 } from './prisma-generated-zod';
 import { initContract } from '@ts-rest/core';
@@ -26,6 +27,16 @@ export const apiJobs = c.router({
     },
     body: JobCreateInputSchema,
     summary: 'Create a job',
+  },
+  updateJob: {
+    method: 'PUT',
+    path: '/jobs/:id',
+    responses: {
+      200: JobSchema,
+      400: z.any(), // this can be your ErrorSchema if you have one
+    },
+    body: JobUpdateInputSchema,
+    summary: 'Update a job',
   },
   fetchAllJobsByProjectId: {
     method: 'GET',

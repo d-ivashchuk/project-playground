@@ -36,7 +36,7 @@ export class ScheduleService {
       );
       this.logger.log(`Job ${job} has been deleted.`);
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error(`'deleteJob job' runs ${jobId}: ${error}`);
     }
   }
 }

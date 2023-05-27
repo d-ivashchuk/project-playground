@@ -8,6 +8,7 @@ import {
   Group,
   SimpleGrid,
   Skeleton,
+  Stack,
   Text,
   Title,
 } from '@mantine/core';
@@ -47,21 +48,27 @@ const Runs = () => {
           <div key={run.id}>
             <Link style={{ textDecoration: 'none' }} href={`/runs/${run.id}`}>
               <Card shadow="xs" padding="xs" radius="md">
-                <Group>
-                  <div>{generateRunIcon(run.status)}</div>
-                  <Text weight={600}>{run.job.name}</Text>
-                  <div>{run.job.url}</div>
-                  {run.endedAt && (
-                    <Text c="dimmed">
-                      {formatDistanceToNow(new Date(run.endedAt), {
-                        addSuffix: true,
-                      })}
-                    </Text>
-                  )}
-                  {run.diffPercentage && (
-                    <Badge color="red">{run.diffPercentage}%</Badge>
-                  )}
-                </Group>
+                <Stack spacing="xs">
+                  <Group>
+                    <div>{generateRunIcon(run.status)}</div>
+                    <Text weight={600}>{run.job.name}</Text>
+                    {run.diffPercentage && (
+                      <Badge color="red">
+                        {Number(run.diffPercentage).toFixed(2)}%
+                      </Badge>
+                    )}
+                  </Group>
+                  <Group>
+                    <div>{run.job.url}</div>
+                    {run.endedAt && (
+                      <Text c="dimmed">
+                        {formatDistanceToNow(new Date(run.endedAt), {
+                          addSuffix: true,
+                        })}
+                      </Text>
+                    )}
+                  </Group>
+                </Stack>
               </Card>
             </Link>
           </div>

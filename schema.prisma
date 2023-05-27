@@ -35,6 +35,7 @@ model Job {
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
   url                    String
+  isPaused               Boolean  @default(false)
 
   baselineImageUrl String?
   runs             Run[]
@@ -46,7 +47,7 @@ model Job {
 model Run {
   id             String    @id @default(cuid())
   jobId          String
-  job            Job       @relation(fields: [jobId], references: [id])
+  job            Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
   status         String // E.g. "running", "completed", "failed"
   startedAt      DateTime
   endedAt        DateTime?

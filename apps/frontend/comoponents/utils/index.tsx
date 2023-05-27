@@ -9,7 +9,7 @@ export const generateRunIcon = (status: string) => {
   if (status === 'DIFFERENCE') {
     icon = <FaExclamationCircle />;
     color = 'red'; // Set your desired color for 'DIFFERENCE' status
-  } else if (status === 'SUCCESS') {
+  } else if (status === 'NO_CHANGE') {
     icon = <FaCheckCircle />;
     color = 'green'; // Set your desired color for 'NO_CHANGE' status
   }
