@@ -1,5 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JobProcessor } from './job.processor';
 import { ScheduleService } from './schedule.service';
 import { ScheduleController } from './schedule.controller';
@@ -10,11 +11,12 @@ import { VisualModule } from '../visual/visual.module';
 @Global()
 @Module({
   imports: [
-    BullModule.forRoot({
-      redis: {
-        host: 'localhost',
-        port: 6379,
-      },
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        redis: configService.get('REDIS_URL'),
+      }),
     }),
     BullModule.registerQueue({
       name: 'jobQueue',
