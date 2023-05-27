@@ -40,8 +40,12 @@ model Job {
   baselineImageUrl String?
   runs             Run[]
 
-  projectId String?
-  project   Project? @relation(fields: [projectId], references: [id])
+  projectId          String?
+  project            Project?          @relation(fields: [projectId], references: [id])
+  slackIntegration   SlackIntegration? @relation(fields: [slackIntegrationId], references: [id])
+  slackIntegrationId String?
+  emailIntegration   EmailIntegration? @relation(fields: [emailIntegrationId], references: [id])
+  emailIntegrationId String?
 }
 
 model Run {
@@ -55,4 +59,21 @@ model Run {
   diffUrl        String?
   diffPercentage Float?
   diffPixels     Int?
+}
+
+// Integrations
+
+model SlackIntegration {
+  id         String  @id @default(cuid())
+  webhookUrl String?
+  channel    String?
+
+  Job Job[]
+}
+
+model EmailIntegration {
+  id    String  @id @default(cuid())
+  email String?
+
+  Job Job[]
 }

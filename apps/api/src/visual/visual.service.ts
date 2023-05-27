@@ -8,6 +8,7 @@ import { Readable } from 'stream';
 import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
 import axios from 'axios';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class VisualService implements OnModuleInit {
@@ -15,7 +16,10 @@ export class VisualService implements OnModuleInit {
   private browserPromise: Promise<void>; // A promise that represents the browser initialization
   private readonly logger = new Logger(VisualService.name);
 
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private notifications: NotificationsService
+  ) {
     this.logger.log(`"VisualService" constructor called`);
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -99,6 +103,10 @@ export class VisualService implements OnModuleInit {
       // Get the up-to-date job from the database, instead of using the one passed in on creation of Bull job
       const upToDateJob = await this.prisma.job.findUnique({
         where: { id: job.id },
+        include: {
+          slackIntegration: true,
+          emailIntegration: true,
+        },
       });
 
       if (upToDateJob?.baselineImageUrl) {
@@ -126,6 +134,33 @@ export class VisualService implements OnModuleInit {
           diffPercentage,
           diffPixels,
         });
+
+        this.logger.log(
+          `"getJobScreenshot" diffUrl: ${diffUrl}, diffPercentage: ${diffPercentage}, diffPixels: ${diffPixels}`
+        );
+
+        // Integrations part, we only send notifications if there are visual changes detected
+
+        if (diffPixels > 0) {
+          this.logger.log(
+            `"getJobScreenshot" visual changes detected, sending notifications for job ${upToDateJob.id}`
+          );
+          this.logger.log(
+            `"getJobScreenshot" xxx ${upToDateJob.emailIntegrationId}`
+          );
+          if (upToDateJob.slackIntegrationId) {
+            this.logger.log(
+              `"getJobScreenshot" sending Slack notification for job ${upToDateJob.id}`
+            );
+            this.notifications.emit('slackIntegration', upToDateJob);
+          }
+          if (upToDateJob.emailIntegrationId) {
+            this.logger.log(
+              `"getJobScreenshot" sending Email notification for job ${upToDateJob.id}`
+            );
+            this.notifications.emit('emailIntegration', upToDateJob);
+          }
+        }
       } else {
         this.createRunAndUpdateJob({ job, screenshotUrl });
       }

@@ -1,9 +1,9 @@
 'use client';
 import { initQueryClient } from '@ts-rest/react-query';
-import { apiJobs } from '@no-code/contracts';
+import { apiJobs, apiIntegrations } from '@no-code/contracts';
 
 export const client = initQueryClient(
-  { apiJobs },
+  { apiJobs, apiIntegrations },
   {
     baseUrl: process.env.NEXT_PUBLIC_API_URL as string,
     baseHeaders: {},

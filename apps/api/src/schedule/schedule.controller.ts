@@ -105,6 +105,10 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
       where: {
         userId: params.userId,
       },
+      include: {
+        slackIntegration: true,
+        emailIntegration: true,
+      },
     });
 
     return { status: 201 as const, body: response };

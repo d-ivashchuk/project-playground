@@ -23,6 +23,7 @@ import {
   cronJobScheduleOptions,
 } from './add-or-edit-job-modal';
 import { Job } from '@prisma/client';
+import { NotificationsModal } from './notifications-modal';
 
 export default function Page() {
   const { user, isLoaded } = useUser();
@@ -43,6 +44,8 @@ export default function Page() {
   );
   const deleteJobMutation = client.apiJobs.deleteJobById.useMutation();
   const updateJobMutation = client.apiJobs.updateJob.useMutation();
+
+  console.log(jobsQuery.data?.body);
 
   const handleJobUpdate = ({ job }: { job: Job }) => {
     updateJobMutation.mutate(
@@ -88,6 +91,7 @@ export default function Page() {
                     {job.isPaused && <Badge>Paused</Badge>}
                   </Group>
                   <Group spacing="xs">
+                    <NotificationsModal job={job} />
                     <AddOrEditJobModal jobToEdit={job} />
 
                     <ActionIcon>
