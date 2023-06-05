@@ -33,7 +33,9 @@ export class VisualService implements OnModuleInit {
   private async initBrowser() {
     try {
       this.logger.log(`VisualService "initBrowser" runs`);
-      this.browser = await chromium.launch();
+      if (!this.browser || !this.browser.isConnected()) {
+        this.browser = await chromium.launch();
+      }
     } catch (error) {
       this.logger.error('Browser initialization failed', error);
       throw error; // re-throw the error after logging it
@@ -56,7 +58,7 @@ export class VisualService implements OnModuleInit {
 
   async getJobScreenshot(job: Job) {
     try {
-      await this.browserPromise;
+      await this.initBrowser();
 
       if (!job || !job.url) {
         this.logger.error('Job or job URL is missing');
