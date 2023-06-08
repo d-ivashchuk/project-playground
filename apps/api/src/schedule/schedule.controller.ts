@@ -28,6 +28,7 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
   async createJob(
     @TsRestRequest() { body }: RequestShapes['createJob']
   ): Promise<ResponseShapes['createJob']> {
+    this.logger.log(`Creating job: ${body.sizeMode}`);
     const response = await this.prisma.job.create({
       data: {
         ...body,

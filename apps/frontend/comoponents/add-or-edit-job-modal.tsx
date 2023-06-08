@@ -22,8 +22,8 @@ import { Job } from '@prisma/client';
 type FormValues = {
   urlToMonitor: string;
   cronJobSchedule: string;
-  sensitivity: string;
-  size: string;
+  differenceThreshold: string;
+  sizeMode: string;
   name: string;
 };
 
@@ -68,8 +68,8 @@ export const AddOrEditJobModal = ({
     ),
     name: z.string().optional(),
     cronJobSchedule: z.string(),
-    sensitivity: z.string(),
-    size: z.string(),
+    differenceThreshold: z.string(),
+    sizeMode: z.string(),
   });
 
   const form = useForm({
@@ -77,8 +77,8 @@ export const AddOrEditJobModal = ({
       urlToMonitor: jobToEdit ? jobToEdit.url : '',
       cronJobSchedule: jobToEdit ? jobToEdit.schedule : '0 * * * *',
       name: jobToEdit ? jobToEdit.name : 'New Job',
-      sensitivity: jobToEdit ? jobToEdit.differenceThreshold : '0.01',
-      // size: jobToEdit ? jobToEdit.size : 'full',
+      differenceThreshold: jobToEdit ? jobToEdit.differenceThreshold : '0.01',
+      sizeMode: jobToEdit ? jobToEdit.sizeMode : 'full',
     },
     validate: zodResolver(formSchema),
   });
@@ -93,7 +93,8 @@ export const AddOrEditJobModal = ({
           url: values.urlToMonitor.includes('://')
             ? values.urlToMonitor
             : 'https://' + values.urlToMonitor,
-          differenceThreshold: Number(values.sensitivity),
+          differenceThreshold: Number(values.differenceThreshold),
+          sizeMode: values.sizeMode,
         },
       };
       if (jobToEdit) {
@@ -173,7 +174,7 @@ export const AddOrEditJobModal = ({
                 placeholder="What change in % should trigger a notification"
                 defaultValue="0.01"
                 size="md"
-                {...form.getInputProps('sensitivity')}
+                {...form.getInputProps('differenceThreshold')}
                 data={[
                   { value: '0.01', label: '1%' },
                   { value: '0.05', label: '5%' },
