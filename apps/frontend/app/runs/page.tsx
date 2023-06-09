@@ -1,6 +1,6 @@
 'use client';
 
-import Runs from '../../comoponents/runs';
+import Runs from '../../components/runs';
 
 export default function Page() {
   return <Runs />;

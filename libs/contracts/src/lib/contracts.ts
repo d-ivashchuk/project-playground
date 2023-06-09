@@ -115,6 +115,17 @@ export const apiJobs = c.router({
     },
     summary: 'Fetch run by id',
   },
+  fetchJobById: {
+    method: 'GET',
+    path: '/jobs/job/:id',
+    responses: {
+      200: JobSchema.extend({
+        emailIntegration: EmailIntegrationSchema,
+        slackIntegration: SlackIntegrationSchema,
+      }),
+    },
+    summary: 'Fetch job by id',
+  },
 });
 
 export const apiIntegrations = c.router({

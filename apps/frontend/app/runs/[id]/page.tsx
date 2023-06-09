@@ -10,7 +10,7 @@ import {
 } from '@mantine/core';
 import { client } from '../../../client';
 import { useParams } from 'next/navigation';
-import { generateRunIcon } from '../../../comoponents/utils';
+import { generateRunIcon } from '../../../components/utils';
 
 export default function Page() {
   const params = useParams();

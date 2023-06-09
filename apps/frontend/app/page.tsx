@@ -1,6 +1,6 @@
 'use client';
 
-import Jobs from '../comoponents/jobs';
+import Jobs from '../components/jobs';
 
 export default function Page() {
   return <Jobs />;

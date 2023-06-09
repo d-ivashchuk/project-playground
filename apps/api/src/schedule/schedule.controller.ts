@@ -221,4 +221,23 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
       return { status: 404 as const, body: response };
     }
   }
+  @TsRest(c.fetchJobById)
+  async fetchJobById(
+    @TsRestRequest() { params }: RequestShapes['fetchJobById']
+  ): Promise<ResponseShapes['fetchJobById']> {
+    const response = await this.prisma.job.findUnique({
+      where: {
+        id: params.id,
+      },
+      include: {
+        slackIntegration: true,
+        emailIntegration: true,
+      },
+    });
+    if (response) {
+      return { status: 201 as const, body: response };
+    } else {
+      return { status: 404 as const, body: response };
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import Providers from '../client';
-import Shell from '../comoponents/shell';
+import Shell from '../components/shell';
 import RootStyleRegistry from './emotion';
 import { ClerkProvider } from '@clerk/nextjs';
 

@@ -77,7 +77,9 @@ export const AddOrEditJobModal = ({
       urlToMonitor: jobToEdit ? jobToEdit.url : '',
       cronJobSchedule: jobToEdit ? jobToEdit.schedule : '0 * * * *',
       name: jobToEdit ? jobToEdit.name : 'New Job',
-      differenceThreshold: jobToEdit ? jobToEdit.differenceThreshold : '0.01',
+      differenceThreshold: jobToEdit
+        ? String(jobToEdit.differenceThreshold)
+        : '0.01',
       sizeMode: jobToEdit ? jobToEdit.sizeMode : 'full',
     },
     validate: zodResolver(formSchema),
@@ -117,6 +119,10 @@ export const AddOrEditJobModal = ({
   return (
     <>
       <Modal
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
         size="100%"
         opened={opened}
         onClose={close}
@@ -213,7 +219,14 @@ export const AddOrEditJobModal = ({
       </Modal>
       {jobToEdit ? (
         <ActionIcon>
-          <FaEdit onClick={open} size="1.125rem" />
+          <FaEdit
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              open();
+            }}
+            size="1.125rem"
+          />
         </ActionIcon>
       ) : (
         <Button

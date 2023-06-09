@@ -202,7 +202,14 @@ export const NotificationsModal = ({
       </Modal>
 
       <ActionIcon>
-        <FaBell onClick={open} size="1.125rem" />
+        <FaBell
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            open();
+          }}
+          size="1.125rem"
+        />
       </ActionIcon>
     </>
   );
