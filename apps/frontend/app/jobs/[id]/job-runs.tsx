@@ -5,13 +5,11 @@ import {
   Badge,
   Box,
   Card,
-  Divider,
   Group,
   SimpleGrid,
   Skeleton,
   Stack,
   Text,
-  Title,
 } from '@mantine/core';
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';

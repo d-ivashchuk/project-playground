@@ -10,7 +10,6 @@ import {
   TsRestRequest,
 } from '@ts-rest/nest';
 import { PrismaService } from '../app/prisma.service';
-import { error } from 'console';
 
 const c = nestControllerContract(apiJobs);
 type RequestShapes = NestRequestShapes<typeof c>;

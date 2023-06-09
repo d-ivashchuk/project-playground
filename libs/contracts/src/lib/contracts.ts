@@ -5,7 +5,6 @@ import {
   JobCreateInputSchema,
   JobSchema,
   JobUpdateInputSchema,
-  RunArgsSchema,
   RunSchema,
   SlackIntegrationCreateInputSchema,
   SlackIntegrationSchema,

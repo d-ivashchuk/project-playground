@@ -5,7 +5,6 @@ import {
   Text,
   Group,
   Stack,
-  AspectRatio,
   Box,
   Badge,
   Divider,
@@ -26,7 +25,7 @@ export default function Page() {
 
   if (!jobId) return <Skeleton />;
 
-  const { data, error, isLoading } = client.apiJobs.fetchJobById.useQuery(
+  const { data, isLoading } = client.apiJobs.fetchJobById.useQuery(
     ['job', user?.id, jobId],
     {
       params: {

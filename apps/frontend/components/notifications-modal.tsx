@@ -7,7 +7,6 @@ import {
   Center,
   Box,
   Group,
-  Text,
   Alert,
   TextInput,
   Title,
@@ -16,7 +15,7 @@ import {
   Button,
 } from '@mantine/core';
 
-import { FaBell, FaExclamationTriangle, FaInfoCircle } from 'react-icons/fa';
+import { FaBell, FaInfoCircle } from 'react-icons/fa';
 import { useUser } from '@clerk/nextjs';
 import { useQueryClient } from '@tanstack/react-query';
 

@@ -1,4 +1,4 @@
-import { Group, ActionIcon, Box } from '@mantine/core';
+import { Group, ActionIcon } from '@mantine/core';
 import React from 'react';
 import {
   RiPlayCircleFill,
