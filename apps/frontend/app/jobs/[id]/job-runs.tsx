@@ -5,6 +5,7 @@ import {
   Badge,
   Box,
   Card,
+  Divider,
   Group,
   SimpleGrid,
   Skeleton,
@@ -14,21 +15,24 @@ import {
 } from '@mantine/core';
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { client } from '../client';
+import { client } from '../../../client';
 
 import Link from 'next/link';
-import { generateRunIcon } from './utils';
+import { generateRunIcon } from '../../../components/utils';
 
-const Runs = () => {
+const JobRuns = ({ jobId }: { jobId: string }) => {
   const { user } = useUser();
 
   if (!user) return <Skeleton />;
 
-  const runsQuery = client.apiJobs.fetchAllRunsForUser.useQuery(
-    ['runs', user?.id],
+  const runsQuery = client.apiJobs.fetchAllRunsByJobId.useQuery(
+    ['job-runs', jobId],
     {
       params: {
-        userId: user.id,
+        id: jobId,
+      },
+      query: {
+        limit: '10',
       },
     },
     {
@@ -40,8 +44,6 @@ const Runs = () => {
 
   return (
     <Box>
-      <Title mb={8}>Runs</Title>
-
       <SimpleGrid>
         {runsQuery.data?.body?.map((run) => (
           <div key={run.id}>
@@ -57,17 +59,16 @@ const Runs = () => {
                       </Badge>
                     )}
                   </Group>
-                  <Group>
-                    <div>{run.job.url}</div>
-                    {run.endedAt && (
-                      <Text c="dimmed">
-                        {formatDistanceToNow(new Date(run.endedAt), {
-                          addSuffix: true,
-                        })}
-                      </Text>
-                    )}
-                  </Group>
                 </Stack>
+                <Group>
+                  {run.endedAt && (
+                    <Text c="dimmed">
+                      {formatDistanceToNow(new Date(run.endedAt), {
+                        addSuffix: true,
+                      })}
+                    </Text>
+                  )}
+                </Group>
               </Card>
             </Link>
           </div>
@@ -77,4 +78,4 @@ const Runs = () => {
   );
 };
 
-export default Runs;
+export default JobRuns;

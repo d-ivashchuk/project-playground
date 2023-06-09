@@ -8,12 +8,15 @@ import {
   AspectRatio,
   Box,
   Badge,
+  Divider,
+  Space,
 } from '@mantine/core';
 import { client } from '../../../client';
 import { useParams } from 'next/navigation';
 import { cronJobScheduleOptions } from '../../../components/add-or-edit-job-modal';
 import JobActions from '../../../components/job-actions';
 import { useUser } from '@clerk/nextjs';
+import JobRuns from './job-runs';
 
 export default function Page() {
   const params = useParams();
@@ -45,7 +48,6 @@ export default function Page() {
         <Skeleton h="xl" w="150px" />
       </Stack>
     );
-  console.log({ data });
 
   return data?.body ? (
     <div>
@@ -68,6 +70,10 @@ export default function Page() {
           <Group>
             <Text color="gray">{data.body?.url}</Text>
           </Group>
+          <Space h="xs" />
+          <Divider />
+          <Space h="xs" />
+          <JobRuns jobId={data.body.id} />
         </Stack>
       </Box>
     </div>

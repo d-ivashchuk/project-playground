@@ -10,6 +10,7 @@ import {
   TsRestRequest,
 } from '@ts-rest/nest';
 import { PrismaService } from '../app/prisma.service';
+import { error } from 'console';
 
 const c = nestControllerContract(apiJobs);
 type RequestShapes = NestRequestShapes<typeof c>;
@@ -109,6 +110,12 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
       include: {
         slackIntegration: true,
         emailIntegration: true,
+        runs: {
+          take: 5,
+          orderBy: {
+            startedAt: 'desc',
+          },
+        },
       },
     });
 
@@ -148,15 +155,29 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
 
   @TsRest(c.fetchAllRunsByJobId)
   async fetchAllRunsByJobId(
-    @TsRestRequest() { params }: RequestShapes['fetchAllRunsByJobId']
+    @TsRestRequest() { params, query }: RequestShapes['fetchAllRunsByJobId']
   ): Promise<ResponseShapes['fetchAllRunsByJobId']> {
-    const response = await this.prisma.run.findMany({
-      where: {
-        jobId: params.id,
-      },
-    });
+    try {
+      this.logger.log(`Fetching all runs for job: ${params.id}${query.limit}`);
+      this.logger.log(`Query limit: ${query.limit}`);
+      const response = await this.prisma.run.findMany({
+        take: Number(query.limit),
+        where: {
+          jobId: params.id,
+        },
+        include: {
+          job: true,
+        },
+        orderBy: {
+          startedAt: 'desc',
+        },
+      });
 
-    return { status: 200 as const, body: response };
+      return { status: 200 as const, body: response };
+    } catch (error) {
+      this.logger.error(`Error fetching runs for job: ${params.id}`, error);
+      return { status: 400 as const, body: error };
+    }
   }
 
   @TsRest(c.fetchAllRunsForUser)

@@ -5,6 +5,7 @@ import {
   JobCreateInputSchema,
   JobSchema,
   JobUpdateInputSchema,
+  RunArgsSchema,
   RunSchema,
   SlackIntegrationCreateInputSchema,
   SlackIntegrationSchema,
@@ -60,6 +61,7 @@ export const apiJobs = c.router({
         JobSchema.extend({
           emailIntegration: EmailIntegrationSchema,
           slackIntegration: SlackIntegrationSchema,
+          runs: z.array(RunSchema),
         })
       ),
     },
@@ -85,8 +87,18 @@ export const apiJobs = c.router({
   fetchAllRunsByJobId: {
     method: 'GET',
     path: '/jobs/:id/runs',
+    query: z.object({
+      limit: z.string().optional(),
+    }),
     responses: {
-      200: z.array(RunSchema),
+      200: z.array(
+        RunSchema.extend({
+          job: z.object({
+            name: z.string(),
+            url: z.string(),
+          }),
+        })
+      ),
     },
     summary: 'Fetch all runs by job id',
   },
