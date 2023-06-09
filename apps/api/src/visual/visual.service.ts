@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../app/prisma.service';
 import { chromium, Browser } from 'playwright';
-import { Job } from '@prisma/client';
+import { Job, Run } from '@prisma/client';
 import { v2 as cloudinary } from 'cloudinary';
 import { SHA256 } from 'crypto-js';
 import { Readable } from 'stream';
@@ -129,7 +129,7 @@ export class VisualService implements OnModuleInit {
             newImageBuffer: buffer,
           });
 
-        this.createRunAndUpdateJob({
+        const run = await this.createRunAndUpdateJob({
           job,
           screenshotUrl,
           diffUrl,
@@ -160,7 +160,7 @@ export class VisualService implements OnModuleInit {
             this.logger.log(
               `"getJobScreenshot" sending Email notification for job ${upToDateJob.id}`
             );
-            this.notifications.emit('emailIntegration', upToDateJob);
+            this.notifications.emit('emailIntegration', upToDateJob, run);
           }
         }
       } else {
@@ -300,7 +300,7 @@ export class VisualService implements OnModuleInit {
     diffUrl?: string;
     diffPixels?: number;
     diffPercentage?: number;
-  }): Promise<void> {
+  }): Promise<Run> {
     try {
       const getStatus = (
         diffUrl: string | undefined
@@ -333,8 +333,10 @@ export class VisualService implements OnModuleInit {
       this.logger.log(
         `"createRunAndUpdateJob" baseline updated for: ${updatedJob.id}`
       );
+      return createdRun;
     } catch (error) {
       this.logger.error(`"createRunAndUpdateJob" error: ${error}`);
+      throw error;
     }
   }
 }
