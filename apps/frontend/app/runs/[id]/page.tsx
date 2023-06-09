@@ -5,8 +5,8 @@ import {
   Text,
   Group,
   Stack,
-  AspectRatio,
   Box,
+  Header,
 } from '@mantine/core';
 import { client } from '../../../client';
 import { useParams } from 'next/navigation';
@@ -18,7 +18,7 @@ export default function Page() {
 
   if (!runId) return <Skeleton />;
 
-  const { data, error, isLoading } = client.apiJobs.fetchRunById.useQuery(
+  const { data, isLoading } = client.apiJobs.fetchRunById.useQuery(
     ['run', runId],
     {
       params: {
@@ -54,14 +54,35 @@ export default function Page() {
         </Text>
       </Box>
 
-      <img
-        src={data.body.diffUrl as string}
-        alt="difference image"
-        style={{
-          maxWidth: '100%',
-          height: 'auto',
-        }}
-      />
+      {data?.body.diffUrl ? (
+        <Box>
+          <Text size="lg" weight={'bolder'} mb="md">
+            Difference
+          </Text>
+          <img
+            src={data.body.diffUrl as string}
+            alt="difference image"
+            style={{
+              maxWidth: '100%',
+              height: 'auto',
+            }}
+          />
+        </Box>
+      ) : (
+        <Box>
+          <Text size="lg" weight={'bolder'} mb="md">
+            Baseline
+          </Text>
+          <img
+            src={data.body.screenshotUrl as string}
+            alt="Baseline image"
+            style={{
+              maxWidth: '100%',
+              height: 'auto',
+            }}
+          />
+        </Box>
+      )}
     </div>
   ) : null;
 }
