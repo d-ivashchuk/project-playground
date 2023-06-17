@@ -13,7 +13,9 @@ import {
   Divider,
   Stack,
   Button,
+  ThemeIcon,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 
 import { FaBell, FaInfoCircle } from 'react-icons/fa';
 import { useUser } from '@clerk/nextjs';
@@ -25,7 +27,7 @@ import { EmailIntegration, Job, SlackIntegration } from '@prisma/client';
 import { AiFillMail } from 'react-icons/ai';
 import { client } from '../client';
 import { useForm, zodResolver } from '@mantine/form';
-import { z } from 'zod';
+import { undefined, z } from 'zod';
 
 const emailIntegrationSchema = z.object({
   email: z.string(),
@@ -75,6 +77,10 @@ export const NotificationsModal = ({
     <>
       <Modal
         size="100%"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
         opened={opened}
         onClose={close}
         title="Notifications"
@@ -172,12 +178,17 @@ export const NotificationsModal = ({
                           id: job.emailIntegrationId,
                         },
                         body: {
-                          email: emailForm.values.email,
+                          email: emailForm.values.email as string,
                         },
                       },
                       {
                         onSuccess: () => {
                           queryClient.invalidateQueries(['jobs', user?.id]);
+                          notifications.show({
+                            color: 'green',
+                            title: 'Success',
+                            message: 'Successfully updated email integration',
+                          });
                         },
                       }
                     );
@@ -201,14 +212,24 @@ export const NotificationsModal = ({
       </Modal>
 
       <ActionIcon>
-        <FaBell
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            open();
-          }}
-          size="1.125rem"
-        />
+        <ThemeIcon
+          variant={
+            job.emailIntegration?.email || job.slackIntegration?.channel
+              ? 'gradient'
+              : ''
+          }
+          gradient={{ from: 'orange', to: 'red' }}
+        >
+          <FaBell
+            color=""
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              open();
+            }}
+            size="1.125rem"
+          />
+        </ThemeIcon>
       </ActionIcon>
     </>
   );

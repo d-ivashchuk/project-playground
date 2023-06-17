@@ -40,7 +40,7 @@ export class NotificationsService extends EventEmitter implements OnModuleInit {
     const msg = {
       to: emailIntegration.email, // The email address specified in the email integration
       from: 'scout@lost-pixel.com', // The email address you've verified with SendGrid
-      subject: 'Lost Pixel Scout: Visual change detected',
+      subject: 'Night Scout: Visual change detected',
       text: 'Visual changes detected',
       html: `<strong>Visual changes detected</strong> \n\n <a href="${process.env.NEXT_PUBLIC_FRONTEND_URL}/runs/${run.id}">View run</a>`,
     };

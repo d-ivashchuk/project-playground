@@ -122,6 +122,7 @@ export const AddOrEditJobModal = ({
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
+          handleSubmit(form.values as FormValues);
         }}
         size="100%"
         opened={opened}

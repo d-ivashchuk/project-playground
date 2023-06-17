@@ -7,6 +7,7 @@ import {
   Card,
   Flex,
   Group,
+  Skeleton,
   Stack,
   Text,
   Title,
@@ -48,7 +49,11 @@ export default function Page() {
         <AddOrEditJobModal />
       </Group>
       {jobsQuery.isLoading ? (
-        <div>Loading...</div>
+        <Stack spacing="md">
+          <Skeleton w="full" h="xl" />
+          <Skeleton w="full" h="xl" />
+          <Skeleton w="full" h="xl" />
+        </Stack>
       ) : (
         <Stack>
           {jobsQuery.data?.body.map((job) => (

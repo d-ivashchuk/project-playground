@@ -1,6 +1,6 @@
 'use client';
 
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
 
 import {
   AppShell,
@@ -14,7 +14,12 @@ import {
   Group,
   ThemeIcon,
   UnstyledButton,
+  Box,
+  Center,
+  Title,
+  LoadingOverlay,
 } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import Link from 'next/link';
 import { ReactNode, useState } from 'react';
 
@@ -22,10 +27,21 @@ import { FaClock, FaCheckSquare, FaHammer, FaFolder } from 'react-icons/fa';
 
 export default function Page({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
+  const { user } = useUser();
   const [opened, setOpened] = useState(false);
+
+  if (!user)
+    return (
+      <Center mt="lg">
+        <Title>Night Scout</Title>
+        <LoadingOverlay visible />
+      </Center>
+    );
 
   return (
     <>
+      <Notifications position="top-right" zIndex={2077} />
+
       <AppShell
         styles={{
           main: {
@@ -35,46 +51,48 @@ export default function Page({ children }: { children: ReactNode }) {
                 : theme.colors.gray[0],
           },
         }}
-        navbarOffsetBreakpoint="sm"
+        navbarOffsetBreakpoint={user ? 'sm' : 0}
         asideOffsetBreakpoint="sm"
         navbar={
-          <Navbar
-            p="xs"
-            hiddenBreakpoint="sm"
-            hidden={!opened}
-            width={{ sm: 200, lg: 300 }}
-          >
-            <Group spacing={1} px={20}>
-              <NavbarItem
-                href="jobs"
-                icon={<FaClock />}
-                label="Jobs"
-                color="green"
-              />
-              <NavbarItem
-                href="runs"
-                icon={<FaCheckSquare />}
-                label="Runs"
-                color="violet"
-              />
-              <NavbarItem
-                href="projects"
-                icon={<FaFolder />}
-                label="Projects"
-                color="yellow"
-              />
-              <NavbarItem
-                href="settings"
-                icon={<FaHammer />}
-                label="Settings"
-                color="blue"
-              />
-            </Group>
-          </Navbar>
+          user ? (
+            <Navbar
+              p="xs"
+              hiddenBreakpoint="sm"
+              hidden={!opened}
+              width={{ sm: 200, lg: 300 }}
+            >
+              <Group spacing={1} px={20}>
+                <NavbarItem
+                  href="jobs"
+                  icon={<FaClock />}
+                  label="Jobs"
+                  color="green"
+                />
+                <NavbarItem
+                  href="runs"
+                  icon={<FaCheckSquare />}
+                  label="Runs"
+                  color="violet"
+                />
+                <NavbarItem
+                  href="projects"
+                  icon={<FaFolder />}
+                  label="Projects"
+                  color="yellow"
+                />
+                <NavbarItem
+                  href="settings"
+                  icon={<FaHammer />}
+                  label="Settings"
+                  color="blue"
+                />
+              </Group>
+            </Navbar>
+          ) : undefined
         }
         footer={
           <Footer height={60} p="md">
-            Application footer
+            All rights reserved © 2023 Lost Pixel
           </Footer>
         }
         header={
@@ -93,7 +111,7 @@ export default function Page({ children }: { children: ReactNode }) {
               </MediaQuery>
 
               <Group w="100%" position="apart">
-                <Text>Lost Pixel Scout</Text>
+                <Text>Night Scout</Text>
                 <UserButton />
               </Group>
             </div>
@@ -118,23 +136,7 @@ const NavbarItem = ({
   href: string;
 }) => {
   return (
-    <UnstyledButton
-      sx={(theme) => ({
-        display: 'block',
-        width: '100%',
-        padding: theme.spacing.xs,
-        borderRadius: theme.radius.sm,
-        color:
-          theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-
-        '&:hover': {
-          backgroundColor:
-            theme.colorScheme === 'dark'
-              ? theme.colors.dark[6]
-              : theme.colors.gray[0],
-        },
-      })}
-    >
+    <Box w="100%">
       <Link
         style={{
           textDecoration: 'none',
@@ -142,14 +144,32 @@ const NavbarItem = ({
         }}
         href={href}
       >
-        <Group>
-          <ThemeIcon color={color} variant="light">
-            {icon}
-          </ThemeIcon>
+        <UnstyledButton
+          sx={(theme) => ({
+            display: 'block',
+            width: '100%',
+            padding: theme.spacing.xs,
+            borderRadius: theme.radius.sm,
+            color:
+              theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
 
-          <Text size="sm">{label}</Text>
-        </Group>
+            '&:hover': {
+              backgroundColor:
+                theme.colorScheme === 'dark'
+                  ? theme.colors.dark[6]
+                  : theme.colors.gray[0],
+            },
+          })}
+        >
+          <Group>
+            <ThemeIcon color={color} variant="light">
+              {icon}
+            </ThemeIcon>
+
+            <Text size="sm">{label}</Text>
+          </Group>
+        </UnstyledButton>
       </Link>
-    </UnstyledButton>
+    </Box>
   );
 };

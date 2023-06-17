@@ -36,43 +36,49 @@ const Runs = () => {
     }
   );
 
-  if (runsQuery.isLoading) return <Skeleton />;
-
   return (
     <Box>
       <Title mb={8}>Runs</Title>
 
-      <SimpleGrid>
-        {runsQuery.data?.body?.map((run) => (
-          <div key={run.id}>
-            <Link style={{ textDecoration: 'none' }} href={`/runs/${run.id}`}>
-              <Card shadow="xs" padding="xs" radius="md">
-                <Stack spacing="xs">
-                  <Group>
-                    <div>{generateRunIcon(run.status)}</div>
-                    <Text weight={600}>{run.job.name}</Text>
-                    {run.diffPercentage && (
-                      <Badge color="red">
-                        {Number(run.diffPercentage).toFixed(2)}%
-                      </Badge>
-                    )}
-                  </Group>
-                  <Group>
-                    <div>{run.job.url}</div>
-                    {run.endedAt && (
-                      <Text c="dimmed">
-                        {formatDistanceToNow(new Date(run.endedAt), {
-                          addSuffix: true,
-                        })}
-                      </Text>
-                    )}
-                  </Group>
-                </Stack>
-              </Card>
-            </Link>
-          </div>
-        ))}
-      </SimpleGrid>
+      {runsQuery.isLoading ? (
+        <Stack spacing="md">
+          <Skeleton w="full" h="xl" />
+          <Skeleton w="full" h="xl" />
+          <Skeleton w="full" h="xl" />
+        </Stack>
+      ) : (
+        <SimpleGrid>
+          {runsQuery.data?.body?.map((run) => (
+            <div key={run.id}>
+              <Link style={{ textDecoration: 'none' }} href={`/runs/${run.id}`}>
+                <Card shadow="xs" padding="xs" radius="md">
+                  <Stack spacing="xs">
+                    <Group>
+                      <div>{generateRunIcon(run.status)}</div>
+                      <Text weight={600}>{run.job.name}</Text>
+                      {run.diffPercentage && (
+                        <Badge color="red">
+                          {Number(run.diffPercentage).toFixed(2)}%
+                        </Badge>
+                      )}
+                    </Group>
+                    <Group>
+                      <div>{run.job.url}</div>
+                      {run.endedAt && (
+                        <Text c="dimmed">
+                          {formatDistanceToNow(new Date(run.endedAt), {
+                            addSuffix: true,
+                          })}
+                        </Text>
+                      )}
+                    </Group>
+                  </Stack>
+                </Card>
+              </Link>
+            </div>
+          ))}
+        </SimpleGrid>
+      )}
     </Box>
   );
 };
