@@ -57,6 +57,7 @@ model Run {
   startedAt      DateTime
   endedAt        DateTime?
   screenshotUrl  String
+  baselineUrl    String?
   diffUrl        String?
   diffPercentage Float?
   diffPixels     Int?

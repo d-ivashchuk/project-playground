@@ -18,7 +18,7 @@ export const ProjectScalarFieldEnumSchema = z.enum(['id','name','createdAt','upd
 
 export const QueryModeSchema = z.enum(['default','insensitive']);
 
-export const RunScalarFieldEnumSchema = z.enum(['id','jobId','status','startedAt','endedAt','screenshotUrl','diffUrl','diffPercentage','diffPixels']);
+export const RunScalarFieldEnumSchema = z.enum(['id','jobId','status','startedAt','endedAt','screenshotUrl','baselineUrl','diffUrl','diffPercentage','diffPixels']);
 
 export const SlackIntegrationScalarFieldEnumSchema = z.enum(['id','webhookUrl','channel']);
 
@@ -78,6 +78,7 @@ export const RunSchema = z.object({
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().nullable(),
   screenshotUrl: z.string(),
+  baselineUrl: z.string().nullable(),
   diffUrl: z.string().nullable(),
   diffPercentage: z.number().nullable(),
   diffPixels: z.number().int().nullable(),
@@ -209,6 +210,7 @@ export const RunSelectSchema: z.ZodType<Prisma.RunSelect> = z.object({
   startedAt: z.boolean().optional(),
   endedAt: z.boolean().optional(),
   screenshotUrl: z.boolean().optional(),
+  baselineUrl: z.boolean().optional(),
   diffUrl: z.boolean().optional(),
   diffPercentage: z.boolean().optional(),
   diffPixels: z.boolean().optional(),
@@ -429,6 +431,7 @@ export const RunWhereInputSchema: z.ZodType<Prisma.RunWhereInput> = z.object({
   startedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   endedAt: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   screenshotUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  baselineUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   diffUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   diffPercentage: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
   diffPixels: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
@@ -442,6 +445,7 @@ export const RunOrderByWithRelationInputSchema: z.ZodType<Prisma.RunOrderByWithR
   startedAt: z.lazy(() => SortOrderSchema).optional(),
   endedAt: z.lazy(() => SortOrderSchema).optional(),
   screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
+  baselineUrl: z.lazy(() => SortOrderSchema).optional(),
   diffUrl: z.lazy(() => SortOrderSchema).optional(),
   diffPercentage: z.lazy(() => SortOrderSchema).optional(),
   diffPixels: z.lazy(() => SortOrderSchema).optional(),
@@ -459,6 +463,7 @@ export const RunOrderByWithAggregationInputSchema: z.ZodType<Prisma.RunOrderByWi
   startedAt: z.lazy(() => SortOrderSchema).optional(),
   endedAt: z.lazy(() => SortOrderSchema).optional(),
   screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
+  baselineUrl: z.lazy(() => SortOrderSchema).optional(),
   diffUrl: z.lazy(() => SortOrderSchema).optional(),
   diffPercentage: z.lazy(() => SortOrderSchema).optional(),
   diffPixels: z.lazy(() => SortOrderSchema).optional(),
@@ -479,6 +484,7 @@ export const RunScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.RunScalar
   startedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   endedAt: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
   screenshotUrl: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  baselineUrl: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   diffUrl: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   diffPercentage: z.union([ z.lazy(() => FloatNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
   diffPixels: z.union([ z.lazy(() => IntNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
@@ -751,6 +757,7 @@ export const RunCreateInputSchema: z.ZodType<Prisma.RunCreateInput> = z.object({
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().optional().nullable(),
   screenshotUrl: z.string(),
+  baselineUrl: z.string().optional().nullable(),
   diffUrl: z.string().optional().nullable(),
   diffPercentage: z.number().optional().nullable(),
   diffPixels: z.number().int().optional().nullable(),
@@ -764,6 +771,7 @@ export const RunUncheckedCreateInputSchema: z.ZodType<Prisma.RunUncheckedCreateI
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().optional().nullable(),
   screenshotUrl: z.string(),
+  baselineUrl: z.string().optional().nullable(),
   diffUrl: z.string().optional().nullable(),
   diffPercentage: z.number().optional().nullable(),
   diffPixels: z.number().int().optional().nullable()
@@ -775,6 +783,7 @@ export const RunUpdateInputSchema: z.ZodType<Prisma.RunUpdateInput> = z.object({
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  baselineUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPixels: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -788,6 +797,7 @@ export const RunUncheckedUpdateInputSchema: z.ZodType<Prisma.RunUncheckedUpdateI
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  baselineUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPixels: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -800,6 +810,7 @@ export const RunCreateManyInputSchema: z.ZodType<Prisma.RunCreateManyInput> = z.
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().optional().nullable(),
   screenshotUrl: z.string(),
+  baselineUrl: z.string().optional().nullable(),
   diffUrl: z.string().optional().nullable(),
   diffPercentage: z.number().optional().nullable(),
   diffPixels: z.number().int().optional().nullable()
@@ -811,6 +822,7 @@ export const RunUpdateManyMutationInputSchema: z.ZodType<Prisma.RunUpdateManyMut
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  baselineUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPixels: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -823,6 +835,7 @@ export const RunUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RunUncheckedUpd
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  baselineUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPixels: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -1217,6 +1230,7 @@ export const RunCountOrderByAggregateInputSchema: z.ZodType<Prisma.RunCountOrder
   startedAt: z.lazy(() => SortOrderSchema).optional(),
   endedAt: z.lazy(() => SortOrderSchema).optional(),
   screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
+  baselineUrl: z.lazy(() => SortOrderSchema).optional(),
   diffUrl: z.lazy(() => SortOrderSchema).optional(),
   diffPercentage: z.lazy(() => SortOrderSchema).optional(),
   diffPixels: z.lazy(() => SortOrderSchema).optional()
@@ -1234,6 +1248,7 @@ export const RunMaxOrderByAggregateInputSchema: z.ZodType<Prisma.RunMaxOrderByAg
   startedAt: z.lazy(() => SortOrderSchema).optional(),
   endedAt: z.lazy(() => SortOrderSchema).optional(),
   screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
+  baselineUrl: z.lazy(() => SortOrderSchema).optional(),
   diffUrl: z.lazy(() => SortOrderSchema).optional(),
   diffPercentage: z.lazy(() => SortOrderSchema).optional(),
   diffPixels: z.lazy(() => SortOrderSchema).optional()
@@ -1246,6 +1261,7 @@ export const RunMinOrderByAggregateInputSchema: z.ZodType<Prisma.RunMinOrderByAg
   startedAt: z.lazy(() => SortOrderSchema).optional(),
   endedAt: z.lazy(() => SortOrderSchema).optional(),
   screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
+  baselineUrl: z.lazy(() => SortOrderSchema).optional(),
   diffUrl: z.lazy(() => SortOrderSchema).optional(),
   diffPercentage: z.lazy(() => SortOrderSchema).optional(),
   diffPixels: z.lazy(() => SortOrderSchema).optional()
@@ -1851,6 +1867,7 @@ export const RunCreateWithoutJobInputSchema: z.ZodType<Prisma.RunCreateWithoutJo
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().optional().nullable(),
   screenshotUrl: z.string(),
+  baselineUrl: z.string().optional().nullable(),
   diffUrl: z.string().optional().nullable(),
   diffPercentage: z.number().optional().nullable(),
   diffPixels: z.number().int().optional().nullable()
@@ -1862,6 +1879,7 @@ export const RunUncheckedCreateWithoutJobInputSchema: z.ZodType<Prisma.RunUnchec
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().optional().nullable(),
   screenshotUrl: z.string(),
+  baselineUrl: z.string().optional().nullable(),
   diffUrl: z.string().optional().nullable(),
   diffPercentage: z.number().optional().nullable(),
   diffPixels: z.number().int().optional().nullable()
@@ -1954,6 +1972,7 @@ export const RunScalarWhereInputSchema: z.ZodType<Prisma.RunScalarWhereInput> = 
   startedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   endedAt: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   screenshotUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  baselineUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   diffUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   diffPercentage: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
   diffPixels: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
@@ -2304,6 +2323,7 @@ export const RunCreateManyJobInputSchema: z.ZodType<Prisma.RunCreateManyJobInput
   startedAt: z.coerce.date(),
   endedAt: z.coerce.date().optional().nullable(),
   screenshotUrl: z.string(),
+  baselineUrl: z.string().optional().nullable(),
   diffUrl: z.string().optional().nullable(),
   diffPercentage: z.number().optional().nullable(),
   diffPixels: z.number().int().optional().nullable()
@@ -2315,6 +2335,7 @@ export const RunUpdateWithoutJobInputSchema: z.ZodType<Prisma.RunUpdateWithoutJo
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  baselineUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPixels: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2326,6 +2347,7 @@ export const RunUncheckedUpdateWithoutJobInputSchema: z.ZodType<Prisma.RunUnchec
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  baselineUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPixels: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2337,6 +2359,7 @@ export const RunUncheckedUpdateManyWithoutRunsInputSchema: z.ZodType<Prisma.RunU
   startedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   endedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   screenshotUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  baselineUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   diffPixels: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),

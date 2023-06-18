@@ -2,7 +2,9 @@ lockfileVersion: 5.4
 
 specifiers:
   '@clerk/nextjs': ^4.18.2
+  '@emotion/cache': ^11.11.0
   '@emotion/react': ^11.11.0
+  '@emotion/serialize': ^1.1.2
   '@emotion/server': ^11.11.0
   '@mantine/core': ^6.0.11
   '@mantine/form': ^6.0.11
@@ -86,7 +88,9 @@ specifiers:
 
 dependencies:
   '@clerk/nextjs': 4.18.2_2xek2u27flvv5bywadnu4xxgx4
+  '@emotion/cache': 11.11.0
   '@emotion/react': 11.11.0_pmekkgnqduwlme35zpnqhenc34
+  '@emotion/serialize': 1.1.2
   '@emotion/server': 11.11.0
   '@mantine/core': 6.0.11_br7fbs26iakhvtzpowmvgc7lqy
   '@mantine/form': 6.0.11_react@18.2.0
@@ -2451,12 +2455,18 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
 
+  /@nrwl/devkit/16.2.1:
+    resolution: {integrity: sha512-yeNEccQzDuL+/thbS2XTq8MtD0KDrI92gXIPSrS/Q6QnDNJGz6T2kRe/mJWrcfrDFm/L61MsAlGXobElhceNMw==}
+    dependencies:
+      '@nx/devkit': 16.2.1_nx@16.2.1
+
   /@nrwl/devkit/16.2.1_nx@16.2.1:
     resolution: {integrity: sha512-yeNEccQzDuL+/thbS2XTq8MtD0KDrI92gXIPSrS/Q6QnDNJGz6T2kRe/mJWrcfrDFm/L61MsAlGXobElhceNMw==}
     dependencies:
       '@nx/devkit': 16.2.1_nx@16.2.1
     transitivePeerDependencies:
       - nx
+    dev: true
 
   /@nrwl/eslint-plugin-nx/16.2.1_f4456avgstpqelfru6meuccevi:
     resolution: {integrity: sha512-bTpM+Qj5e5XdZtMTWJg3U72Sh+LCARNIQZt2W9uVEkWBTmknAAyZjn9BlQDskZbaMIwNL7TjG5Py836lpOAMCw==}
@@ -2668,7 +2678,7 @@ packages:
     peerDependencies:
       nx: '>= 15 <= 17'
     dependencies:
-      '@nrwl/devkit': 16.2.1_nx@16.2.1
+      '@nrwl/devkit': 16.2.1
       ejs: 3.1.9
       ignore: 5.2.4
       nx: 16.2.1

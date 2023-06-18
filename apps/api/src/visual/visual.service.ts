@@ -132,6 +132,7 @@ export class VisualService implements OnModuleInit {
         const run = await this.createRunAndUpdateJob({
           job,
           screenshotUrl,
+          baselineImageUrl: upToDateJob.baselineImageUrl,
           diffUrl,
           diffPercentage,
           diffPixels,
@@ -291,12 +292,14 @@ export class VisualService implements OnModuleInit {
   async createRunAndUpdateJob({
     job,
     screenshotUrl,
+    baselineImageUrl,
     diffUrl,
     diffPixels,
     diffPercentage,
   }: {
     job: Job;
     screenshotUrl: string;
+    baselineImageUrl?: string;
     diffUrl?: string;
     diffPixels?: number;
     diffPercentage?: number;
@@ -315,6 +318,7 @@ export class VisualService implements OnModuleInit {
         data: {
           jobId: job.id,
           screenshotUrl,
+          baselineUrl: baselineImageUrl,
           diffUrl,
           diffPixels,
           diffPercentage,

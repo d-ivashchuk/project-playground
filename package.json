@@ -6,7 +6,9 @@
   "private": true,
   "dependencies": {
     "@clerk/nextjs": "^4.18.2",
+    "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.0",
+    "@emotion/serialize": "^1.1.2",
     "@emotion/server": "^11.11.0",
     "@mantine/core": "^6.0.11",
     "@mantine/form": "^6.0.11",

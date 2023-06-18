@@ -6,15 +6,17 @@ import {
   Group,
   Stack,
   Box,
-  Header,
+  SegmentedControl,
 } from '@mantine/core';
 import { client } from '../../../client';
 import { useParams } from 'next/navigation';
 import { generateRunIcon } from '../../../components/utils';
+import { useState } from 'react';
 
 export default function Page() {
   const params = useParams();
   const runId = Array.isArray(params?.id) ? params?.id[0] : params?.id;
+  const [value, setValue] = useState('difference');
 
   if (!runId) return <Skeleton />;
 
@@ -54,27 +56,51 @@ export default function Page() {
         </Text>
       </Box>
 
-      {data?.body.diffUrl ? (
+      <Box mb="sm">
+        <SegmentedControl
+          value={value}
+          onChange={setValue}
+          data={[
+            { value: 'difference', label: 'Difference' },
+            { value: 'previous-run', label: 'Previous run' },
+            { value: 'current-run', label: 'Current run' },
+            // { value: 'side-by-side', label: 'Side by Side' },
+          ]}
+        />
+      </Box>
+
+      {value === 'difference' && (
+        <div>
+          {data?.body.diffUrl && (
+            <Box>
+              <img
+                src={data.body.diffUrl as string}
+                alt="difference image"
+                style={{
+                  maxWidth: '100%',
+                  height: 'auto',
+                }}
+              />
+            </Box>
+          )}
+        </div>
+      )}
+      {value === 'current-run' && (
         <Box>
-          <Text size="lg" weight={'bolder'} mb="md">
-            Difference
-          </Text>
           <img
-            src={data.body.diffUrl as string}
-            alt="difference image"
+            src={data.body.screenshotUrl as string}
+            alt="Baseline image"
             style={{
               maxWidth: '100%',
               height: 'auto',
             }}
           />
         </Box>
-      ) : (
+      )}
+      {value === 'previous-run' && (
         <Box>
-          <Text size="lg" weight={'bolder'} mb="md">
-            Baseline
-          </Text>
           <img
-            src={data.body.screenshotUrl as string}
+            src={data.body.baselineUrl as string}
             alt="Baseline image"
             style={{
               maxWidth: '100%',
