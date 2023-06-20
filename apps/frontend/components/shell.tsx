@@ -27,10 +27,10 @@ import { FaClock, FaCheckSquare, FaHammer, FaFolder } from 'react-icons/fa';
 
 export default function Page({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [opened, setOpened] = useState(false);
 
-  if (!user)
+  if (!isLoaded)
     return (
       <Center mt="lg">
         <Title>Night Scout</Title>
