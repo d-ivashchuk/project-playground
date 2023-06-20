@@ -122,7 +122,6 @@ export const AddOrEditJobModal = ({
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          handleSubmit(form.values as FormValues);
         }}
         size="100%"
         opened={opened}
@@ -137,15 +136,7 @@ export const AddOrEditJobModal = ({
           blur: 3,
         }}
       >
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const validation = form.validate();
-            if (!validation.hasErrors) {
-              handleSubmit(form.values as FormValues);
-            }
-          }}
-        >
+        <form>
           <Stack>
             <TextInput
               withAsterisk
@@ -211,7 +202,12 @@ export const AddOrEditJobModal = ({
               variant="gradient"
               size="md"
               gradient={{ from: 'teal', to: 'lime', deg: 105 }}
-              type="submit"
+              onClick={() => {
+                const validation = form.validate();
+                if (!validation.hasErrors) {
+                  handleSubmit(form.values as FormValues);
+                }
+              }}
             >
               {jobToEdit ? 'Update job' : 'Add new job'}
             </Button>

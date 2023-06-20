@@ -86,6 +86,77 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
     }
   }
 
+  @TsRest(c.createProject)
+  async createProject(
+    @TsRestRequest() { body }: RequestShapes['createProject']
+  ): Promise<ResponseShapes['createProject']> {
+    const response = await this.prisma.project.create({
+      data: {
+        ...body,
+      },
+    });
+
+    if (response.id) {
+      this.logger.log(`Creating new project: ${response.id}`);
+    }
+
+    return { status: 200 as const, body: response };
+  }
+
+  @TsRest(c.updateProject)
+  async updateProject(
+    @TsRestRequest() { body, params }: RequestShapes['updateProject']
+  ): Promise<ResponseShapes['updateProject']> {
+    try {
+      this.logger.log(`Updating project: ${params.id}`);
+      const existing = await this.prisma.project.findUnique({
+        where: {
+          id: params.id,
+        },
+      });
+
+      // If existing job doesn't exist, then return an error
+      if (!existing) {
+        this.logger.error(`Job not found: ${params.id}`);
+        return { status: 404 as const, body: 'Job not found.' };
+      }
+
+      this.logger.log(JSON.stringify(body, null, 2));
+      console.log(body);
+
+      // Update the job in the database
+      const updatedProject = await this.prisma.project.update({
+        where: {
+          id: params.id,
+        },
+        data: {
+          ...body,
+        },
+      });
+
+      return { status: 200 as const, body: updatedProject };
+    } catch (error) {
+      this.logger.error(error);
+      return { status: 400 as const, body: 'Update operation failed.' };
+    }
+  }
+
+  @TsRest(c.fetchAllProjectsByUserId)
+  async fetchAllProjectsByUserId(
+    @TsRestRequest() { params }: RequestShapes['fetchAllProjectsByUserId']
+  ): Promise<ResponseShapes['fetchAllProjectsByUserId']> {
+    const response = await this.prisma.project.findMany({
+      where: {
+        userId: params.userId,
+      },
+      include: {
+        jobs: true,
+      },
+    });
+
+    return { status: 200 as const, body: response };
+  }
+
   @TsRest(c.fetchAllJobsByProjectId)
   async fetchAllJobsByProjectId(
     @TsRestRequest() { params }: RequestShapes['fetchAllJobsByProjectId']
@@ -149,6 +220,53 @@ export class ScheduleController implements NestControllerInterface<typeof c> {
     } catch (error) {
       this.logger.error(error);
       return { status: 400 as const, body: error };
+    }
+  }
+
+  @TsRest(c.deleteProjectById)
+  async deleteProjectById(
+    @TsRestRequest() { params }: RequestShapes['deleteProjectById']
+  ): Promise<ResponseShapes['deleteProjectById']> {
+    try {
+      this.logger.log(`Deleting job: ${params.id}`);
+      const response = await this.prisma.project.delete({
+        where: {
+          id: params.id,
+        },
+      });
+
+      return { status: 201 as const, body: response };
+    } catch (error) {
+      this.logger.error(error);
+      return { status: 400 as const, body: error };
+    }
+  }
+
+  @TsRest(c.fetchProjectById)
+  async fetchProjectById(
+    @TsRestRequest() { params }: RequestShapes['fetchProjectById']
+  ): Promise<ResponseShapes['fetchProjectById']> {
+    const response = await this.prisma.project.findUnique({
+      where: {
+        id: params.id,
+      },
+      include: {
+        jobs: {
+          include: {
+            runs: {
+              take: 5,
+              orderBy: {
+                startedAt: 'desc',
+              },
+            },
+          },
+        },
+      },
+    });
+    if (response) {
+      return { status: 201 as const, body: response };
+    } else {
+      return { status: 404 as const, body: response };
     }
   }
 

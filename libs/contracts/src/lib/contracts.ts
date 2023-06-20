@@ -5,6 +5,9 @@ import {
   JobCreateInputSchema,
   JobSchema,
   JobUpdateInputSchema,
+  ProjectCreateInputSchema,
+  ProjectSchema,
+  ProjectUpdateInputSchema,
   RunSchema,
   SlackIntegrationCreateInputSchema,
   SlackIntegrationSchema,
@@ -44,6 +47,25 @@ export const apiJobs = c.router({
     body: JobUpdateInputSchema,
     summary: 'Update a job',
   },
+  createProject: {
+    method: 'POST',
+    path: '/project',
+    responses: {
+      201: ProjectSchema,
+    },
+    body: ProjectCreateInputSchema,
+    summary: 'Create a project',
+  },
+  updateProject: {
+    method: 'PUT',
+    path: '/projects/:id',
+    responses: {
+      200: ProjectSchema,
+      400: z.any(), // this can be your ErrorSchema if you have one
+    },
+    body: ProjectUpdateInputSchema,
+    summary: 'Update a job',
+  },
   fetchAllJobsByProjectId: {
     method: 'GET',
     path: '/jobs/project/:projectId',
@@ -51,6 +73,23 @@ export const apiJobs = c.router({
       200: z.array(JobSchema),
     },
     summary: 'Fetch all jobs by project id',
+  },
+  fetchAllProjectsByUserId: {
+    method: 'GET',
+    path: '/projects/user/:userId',
+    responses: {
+      200: z.array(ProjectSchema.extend({ jobs: z.array(JobSchema) })),
+    },
+    summary: 'Fetch all jobs by project id',
+  },
+  deleteProjectById: {
+    method: 'DELETE',
+    path: '/projects/:id',
+    responses: {
+      200: z.string,
+    },
+    body: null,
+    summary: 'Delete project by id',
   },
   fetchAllJobsByUserId: {
     method: 'GET',
@@ -136,6 +175,22 @@ export const apiJobs = c.router({
       }),
     },
     summary: 'Fetch job by id',
+  },
+  fetchProjectById: {
+    method: 'GET',
+    path: '/projects/:id',
+    responses: {
+      200: ProjectSchema.extend({
+        jobs: z.array(
+          JobSchema.extend({
+            runs: z.array(RunSchema),
+            slackIntegration: SlackIntegrationSchema,
+            emailIntegration: EmailIntegrationSchema,
+          })
+        ),
+      }),
+    },
+    summary: 'Fetch project by id',
   },
 });
 

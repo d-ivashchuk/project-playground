@@ -28,12 +28,11 @@ import { formatDistanceToNow } from 'date-fns';
 export default function Page() {
   const { user } = useUser();
 
-  if (!user) return null;
-
   const jobsQuery = client.apiJobs.fetchAllJobsByUserId.useQuery(
     ['jobs', user?.id],
     {
       params: {
+        //@ts-expect-error - clerk user id is a string
         userId: user.id,
       },
     },
