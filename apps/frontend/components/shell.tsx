@@ -37,12 +37,10 @@ export default function Page({ children }: { children: ReactNode }) {
       <Center mt="lg">
         <Stack>
           <Center>
-            <Image src="/logo.png" width="250" height="250" alt="logo" />
+            <Image src="/logo.png" width="200" height="200" alt="logo" />
           </Center>
 
-          <Title pos="relative" top="-70px" align="center">
-            Night Scan
-          </Title>
+          <Title align="center">Nightscan</Title>
         </Stack>
         <LoadingOverlay visible />
       </Center>
@@ -123,14 +121,9 @@ export default function Page({ children }: { children: ReactNode }) {
               <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
                 <Group w="100%" position="apart">
                   <Group>
-                    <Image
-                      src="/logo.png"
-                      width="120"
-                      height="120"
-                      alt="logo"
-                    />
-                    <Text pos="relative" left="-35px" weight="400" size="lg">
-                      Night Scan
+                    <Image src="/logo.png" width="70" height="70" alt="logo" />
+                    <Text weight="500" size="xl">
+                      Nightscan
                     </Text>
                   </Group>
                   <UserButton />
