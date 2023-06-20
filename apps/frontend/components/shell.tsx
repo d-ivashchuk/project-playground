@@ -18,8 +18,10 @@ import {
   Center,
   Title,
   LoadingOverlay,
+  Stack,
 } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode, useState } from 'react';
 
@@ -33,7 +35,15 @@ export default function Page({ children }: { children: ReactNode }) {
   if (!isLoaded)
     return (
       <Center mt="lg">
-        <Title>Night Scout</Title>
+        <Stack>
+          <Center>
+            <Image src="/logo.png" width="250" height="250" alt="logo" />
+          </Center>
+
+          <Title pos="relative" top="-70px" align="center">
+            Night Scan
+          </Title>
+        </Stack>
         <LoadingOverlay visible />
       </Center>
     );
@@ -110,10 +120,22 @@ export default function Page({ children }: { children: ReactNode }) {
                 />
               </MediaQuery>
 
-              <Group w="100%" position="apart">
-                <Text>Night Scout</Text>
-                <UserButton />
-              </Group>
+              <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
+                <Group w="100%" position="apart">
+                  <Group>
+                    <Image
+                      src="/logo.png"
+                      width="120"
+                      height="120"
+                      alt="logo"
+                    />
+                    <Text pos="relative" left="-35px" weight="400" size="lg">
+                      Night Scan
+                    </Text>
+                  </Group>
+                  <UserButton />
+                </Group>
+              </MediaQuery>
             </div>
           </Header>
         }
