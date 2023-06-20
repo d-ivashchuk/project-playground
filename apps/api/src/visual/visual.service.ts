@@ -127,6 +127,7 @@ export class VisualService implements OnModuleInit {
           await this.compareImages({
             baselineImageBuffer,
             newImageBuffer: buffer,
+            threshold: upToDateJob.differenceThreshold,
           });
 
         const run = await this.createRunAndUpdateJob({
@@ -244,11 +245,13 @@ export class VisualService implements OnModuleInit {
   async compareImages({
     baselineImageBuffer,
     newImageBuffer,
+    threshold,
   }: {
     baselineImageBuffer: Buffer;
     newImageBuffer: Buffer;
+    threshold: number | null;
   }): Promise<{ diffUrl: string; diffPercentage: number; diffPixels: number }> {
-    this.logger.log('"compareImages" runs');
+    this.logger.log(`"compareImages" runs with threshold: ${threshold}`);
 
     // Convert the buffers to PNG images
     const img1 = PNG.sync.read(baselineImageBuffer);
@@ -265,7 +268,7 @@ export class VisualService implements OnModuleInit {
       diff.data,
       width,
       height,
-      { threshold: 0.1 }
+      { threshold: threshold || 0.1 }
     );
 
     // Calculate the percentage of different pixels
