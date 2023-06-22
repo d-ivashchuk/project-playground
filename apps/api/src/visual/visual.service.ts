@@ -311,7 +311,7 @@ export class VisualService implements OnModuleInit {
       const getStatus = (
         diffUrl: string | undefined
       ): 'DIFFERENCE' | 'NO_CHANGE' => {
-        if (diffUrl) {
+        if (diffUrl && diffPercentage && diffPercentage > 0) {
           return 'DIFFERENCE';
         } else {
           return 'NO_CHANGE';
