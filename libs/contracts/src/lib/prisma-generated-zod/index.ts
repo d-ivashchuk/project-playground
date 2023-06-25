@@ -10,21 +10,23 @@ import type { Prisma } from '@prisma/client';
 // ENUMS
 /////////////////////////////////////////
 
-export const EmailIntegrationScalarFieldEnumSchema = z.enum(['id','email']);
-
-export const JobScalarFieldEnumSchema = z.enum(['id','userId','name','schedule','waitBeforeScreenshot','actionBeforeScreenshot','differenceThreshold','sizeMode','createdAt','updatedAt','url','isPaused','baselineImageUrl','projectId','slackIntegrationId','emailIntegrationId']);
+export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
 
 export const ProjectScalarFieldEnumSchema = z.enum(['id','name','colorCode','userId','createdAt','updatedAt']);
 
-export const QueryModeSchema = z.enum(['default','insensitive']);
+export const JobScalarFieldEnumSchema = z.enum(['id','userId','name','schedule','waitBeforeScreenshot','actionBeforeScreenshot','differenceThreshold','sizeMode','createdAt','updatedAt','url','isPaused','baselineImageUrl','projectId','slackIntegrationId','emailIntegrationId']);
 
 export const RunScalarFieldEnumSchema = z.enum(['id','jobId','status','startedAt','endedAt','screenshotUrl','baselineUrl','diffUrl','diffPercentage','diffPixels']);
 
 export const SlackIntegrationScalarFieldEnumSchema = z.enum(['id','webhookUrl','channel']);
 
+export const EmailIntegrationScalarFieldEnumSchema = z.enum(['id','email']);
+
 export const SortOrderSchema = z.enum(['asc','desc']);
 
-export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
+export const QueryModeSchema = z.enum(['default','insensitive']);
+
+export const NullsOrderSchema = z.enum(['first','last']);
 /////////////////////////////////////////
 // MODELS
 /////////////////////////////////////////
@@ -299,7 +301,7 @@ export const ProjectWhereInputSchema: z.ZodType<Prisma.ProjectWhereInput> = z.ob
 export const ProjectOrderByWithRelationInputSchema: z.ZodType<Prisma.ProjectOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
-  colorCode: z.lazy(() => SortOrderSchema).optional(),
+  colorCode: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
@@ -313,7 +315,7 @@ export const ProjectWhereUniqueInputSchema: z.ZodType<Prisma.ProjectWhereUniqueI
 export const ProjectOrderByWithAggregationInputSchema: z.ZodType<Prisma.ProjectOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
-  colorCode: z.lazy(() => SortOrderSchema).optional(),
+  colorCode: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
@@ -365,18 +367,18 @@ export const JobOrderByWithRelationInputSchema: z.ZodType<Prisma.JobOrderByWithR
   userId: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   schedule: z.lazy(() => SortOrderSchema).optional(),
-  waitBeforeScreenshot: z.lazy(() => SortOrderSchema).optional(),
-  actionBeforeScreenshot: z.lazy(() => SortOrderSchema).optional(),
-  differenceThreshold: z.lazy(() => SortOrderSchema).optional(),
-  sizeMode: z.lazy(() => SortOrderSchema).optional(),
+  waitBeforeScreenshot: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  actionBeforeScreenshot: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  differenceThreshold: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  sizeMode: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
   isPaused: z.lazy(() => SortOrderSchema).optional(),
-  baselineImageUrl: z.lazy(() => SortOrderSchema).optional(),
-  projectId: z.lazy(() => SortOrderSchema).optional(),
-  slackIntegrationId: z.lazy(() => SortOrderSchema).optional(),
-  emailIntegrationId: z.lazy(() => SortOrderSchema).optional(),
+  baselineImageUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  projectId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  slackIntegrationId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  emailIntegrationId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   runs: z.lazy(() => RunOrderByRelationAggregateInputSchema).optional(),
   project: z.lazy(() => ProjectOrderByWithRelationInputSchema).optional(),
   slackIntegration: z.lazy(() => SlackIntegrationOrderByWithRelationInputSchema).optional(),
@@ -392,18 +394,18 @@ export const JobOrderByWithAggregationInputSchema: z.ZodType<Prisma.JobOrderByWi
   userId: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   schedule: z.lazy(() => SortOrderSchema).optional(),
-  waitBeforeScreenshot: z.lazy(() => SortOrderSchema).optional(),
-  actionBeforeScreenshot: z.lazy(() => SortOrderSchema).optional(),
-  differenceThreshold: z.lazy(() => SortOrderSchema).optional(),
-  sizeMode: z.lazy(() => SortOrderSchema).optional(),
+  waitBeforeScreenshot: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  actionBeforeScreenshot: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  differenceThreshold: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  sizeMode: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
   isPaused: z.lazy(() => SortOrderSchema).optional(),
-  baselineImageUrl: z.lazy(() => SortOrderSchema).optional(),
-  projectId: z.lazy(() => SortOrderSchema).optional(),
-  slackIntegrationId: z.lazy(() => SortOrderSchema).optional(),
-  emailIntegrationId: z.lazy(() => SortOrderSchema).optional(),
+  baselineImageUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  projectId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  slackIntegrationId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  emailIntegrationId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => JobCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => JobAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => JobMaxOrderByAggregateInputSchema).optional(),
@@ -455,12 +457,12 @@ export const RunOrderByWithRelationInputSchema: z.ZodType<Prisma.RunOrderByWithR
   jobId: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   startedAt: z.lazy(() => SortOrderSchema).optional(),
-  endedAt: z.lazy(() => SortOrderSchema).optional(),
+  endedAt: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
-  baselineUrl: z.lazy(() => SortOrderSchema).optional(),
-  diffUrl: z.lazy(() => SortOrderSchema).optional(),
-  diffPercentage: z.lazy(() => SortOrderSchema).optional(),
-  diffPixels: z.lazy(() => SortOrderSchema).optional(),
+  baselineUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  diffUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  diffPercentage: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  diffPixels: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   job: z.lazy(() => JobOrderByWithRelationInputSchema).optional()
 }).strict();
 
@@ -473,12 +475,12 @@ export const RunOrderByWithAggregationInputSchema: z.ZodType<Prisma.RunOrderByWi
   jobId: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   startedAt: z.lazy(() => SortOrderSchema).optional(),
-  endedAt: z.lazy(() => SortOrderSchema).optional(),
+  endedAt: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   screenshotUrl: z.lazy(() => SortOrderSchema).optional(),
-  baselineUrl: z.lazy(() => SortOrderSchema).optional(),
-  diffUrl: z.lazy(() => SortOrderSchema).optional(),
-  diffPercentage: z.lazy(() => SortOrderSchema).optional(),
-  diffPixels: z.lazy(() => SortOrderSchema).optional(),
+  baselineUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  diffUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  diffPercentage: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  diffPixels: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => RunCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => RunAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => RunMaxOrderByAggregateInputSchema).optional(),
@@ -514,8 +516,8 @@ export const SlackIntegrationWhereInputSchema: z.ZodType<Prisma.SlackIntegration
 
 export const SlackIntegrationOrderByWithRelationInputSchema: z.ZodType<Prisma.SlackIntegrationOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  webhookUrl: z.lazy(() => SortOrderSchema).optional(),
-  channel: z.lazy(() => SortOrderSchema).optional(),
+  webhookUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  channel: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   Job: z.lazy(() => JobOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
@@ -525,8 +527,8 @@ export const SlackIntegrationWhereUniqueInputSchema: z.ZodType<Prisma.SlackInteg
 
 export const SlackIntegrationOrderByWithAggregationInputSchema: z.ZodType<Prisma.SlackIntegrationOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  webhookUrl: z.lazy(() => SortOrderSchema).optional(),
-  channel: z.lazy(() => SortOrderSchema).optional(),
+  webhookUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  channel: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => SlackIntegrationCountOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => SlackIntegrationMaxOrderByAggregateInputSchema).optional(),
   _min: z.lazy(() => SlackIntegrationMinOrderByAggregateInputSchema).optional()
@@ -552,7 +554,7 @@ export const EmailIntegrationWhereInputSchema: z.ZodType<Prisma.EmailIntegration
 
 export const EmailIntegrationOrderByWithRelationInputSchema: z.ZodType<Prisma.EmailIntegrationOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  email: z.lazy(() => SortOrderSchema).optional(),
+  email: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   Job: z.lazy(() => JobOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
@@ -562,7 +564,7 @@ export const EmailIntegrationWhereUniqueInputSchema: z.ZodType<Prisma.EmailInteg
 
 export const EmailIntegrationOrderByWithAggregationInputSchema: z.ZodType<Prisma.EmailIntegrationOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  email: z.lazy(() => SortOrderSchema).optional(),
+  email: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => EmailIntegrationCountOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => EmailIntegrationMaxOrderByAggregateInputSchema).optional(),
   _min: z.lazy(() => EmailIntegrationMinOrderByAggregateInputSchema).optional()
@@ -999,6 +1001,11 @@ export const JobListRelationFilterSchema: z.ZodType<Prisma.JobListRelationFilter
   none: z.lazy(() => JobWhereInputSchema).optional()
 }).strict();
 
+export const SortOrderInputSchema: z.ZodType<Prisma.SortOrderInput> = z.object({
+  sort: z.lazy(() => SortOrderSchema),
+  nulls: z.lazy(() => NullsOrderSchema).optional()
+}).strict();
+
 export const JobOrderByRelationAggregateInputSchema: z.ZodType<Prisma.JobOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -1251,8 +1258,8 @@ export const DateTimeNullableFilterSchema: z.ZodType<Prisma.DateTimeNullableFilt
 }).strict();
 
 export const JobRelationFilterSchema: z.ZodType<Prisma.JobRelationFilter> = z.object({
-  is: z.lazy(() => JobWhereInputSchema).optional(),
-  isNot: z.lazy(() => JobWhereInputSchema).optional()
+  is: z.lazy(() => JobWhereInputSchema).optional().nullable(),
+  isNot: z.lazy(() => JobWhereInputSchema).optional().nullable()
 }).strict();
 
 export const RunCountOrderByAggregateInputSchema: z.ZodType<Prisma.RunCountOrderByAggregateInput> = z.object({
@@ -2547,7 +2554,7 @@ export const ProjectFindFirstArgsSchema: z.ZodType<Prisma.ProjectFindFirstArgs> 
   cursor: ProjectWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: ProjectScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ ProjectScalarFieldEnumSchema,ProjectScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const ProjectFindFirstOrThrowArgsSchema: z.ZodType<Prisma.ProjectFindFirstOrThrowArgs> = z.object({
@@ -2558,7 +2565,7 @@ export const ProjectFindFirstOrThrowArgsSchema: z.ZodType<Prisma.ProjectFindFirs
   cursor: ProjectWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: ProjectScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ ProjectScalarFieldEnumSchema,ProjectScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const ProjectFindManyArgsSchema: z.ZodType<Prisma.ProjectFindManyArgs> = z.object({
@@ -2569,7 +2576,7 @@ export const ProjectFindManyArgsSchema: z.ZodType<Prisma.ProjectFindManyArgs> = 
   cursor: ProjectWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: ProjectScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ ProjectScalarFieldEnumSchema,ProjectScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const ProjectAggregateArgsSchema: z.ZodType<Prisma.ProjectAggregateArgs> = z.object({
@@ -2609,7 +2616,7 @@ export const JobFindFirstArgsSchema: z.ZodType<Prisma.JobFindFirstArgs> = z.obje
   cursor: JobWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: JobScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ JobScalarFieldEnumSchema,JobScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const JobFindFirstOrThrowArgsSchema: z.ZodType<Prisma.JobFindFirstOrThrowArgs> = z.object({
@@ -2620,7 +2627,7 @@ export const JobFindFirstOrThrowArgsSchema: z.ZodType<Prisma.JobFindFirstOrThrow
   cursor: JobWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: JobScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ JobScalarFieldEnumSchema,JobScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const JobFindManyArgsSchema: z.ZodType<Prisma.JobFindManyArgs> = z.object({
@@ -2631,7 +2638,7 @@ export const JobFindManyArgsSchema: z.ZodType<Prisma.JobFindManyArgs> = z.object
   cursor: JobWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: JobScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ JobScalarFieldEnumSchema,JobScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const JobAggregateArgsSchema: z.ZodType<Prisma.JobAggregateArgs> = z.object({
@@ -2671,7 +2678,7 @@ export const RunFindFirstArgsSchema: z.ZodType<Prisma.RunFindFirstArgs> = z.obje
   cursor: RunWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: RunScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ RunScalarFieldEnumSchema,RunScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const RunFindFirstOrThrowArgsSchema: z.ZodType<Prisma.RunFindFirstOrThrowArgs> = z.object({
@@ -2682,7 +2689,7 @@ export const RunFindFirstOrThrowArgsSchema: z.ZodType<Prisma.RunFindFirstOrThrow
   cursor: RunWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: RunScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ RunScalarFieldEnumSchema,RunScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const RunFindManyArgsSchema: z.ZodType<Prisma.RunFindManyArgs> = z.object({
@@ -2693,7 +2700,7 @@ export const RunFindManyArgsSchema: z.ZodType<Prisma.RunFindManyArgs> = z.object
   cursor: RunWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: RunScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ RunScalarFieldEnumSchema,RunScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const RunAggregateArgsSchema: z.ZodType<Prisma.RunAggregateArgs> = z.object({
@@ -2733,7 +2740,7 @@ export const SlackIntegrationFindFirstArgsSchema: z.ZodType<Prisma.SlackIntegrat
   cursor: SlackIntegrationWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: SlackIntegrationScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ SlackIntegrationScalarFieldEnumSchema,SlackIntegrationScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const SlackIntegrationFindFirstOrThrowArgsSchema: z.ZodType<Prisma.SlackIntegrationFindFirstOrThrowArgs> = z.object({
@@ -2744,7 +2751,7 @@ export const SlackIntegrationFindFirstOrThrowArgsSchema: z.ZodType<Prisma.SlackI
   cursor: SlackIntegrationWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: SlackIntegrationScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ SlackIntegrationScalarFieldEnumSchema,SlackIntegrationScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const SlackIntegrationFindManyArgsSchema: z.ZodType<Prisma.SlackIntegrationFindManyArgs> = z.object({
@@ -2755,7 +2762,7 @@ export const SlackIntegrationFindManyArgsSchema: z.ZodType<Prisma.SlackIntegrati
   cursor: SlackIntegrationWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: SlackIntegrationScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ SlackIntegrationScalarFieldEnumSchema,SlackIntegrationScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const SlackIntegrationAggregateArgsSchema: z.ZodType<Prisma.SlackIntegrationAggregateArgs> = z.object({
@@ -2795,7 +2802,7 @@ export const EmailIntegrationFindFirstArgsSchema: z.ZodType<Prisma.EmailIntegrat
   cursor: EmailIntegrationWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: EmailIntegrationScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ EmailIntegrationScalarFieldEnumSchema,EmailIntegrationScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const EmailIntegrationFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EmailIntegrationFindFirstOrThrowArgs> = z.object({
@@ -2806,7 +2813,7 @@ export const EmailIntegrationFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EmailI
   cursor: EmailIntegrationWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: EmailIntegrationScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ EmailIntegrationScalarFieldEnumSchema,EmailIntegrationScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const EmailIntegrationFindManyArgsSchema: z.ZodType<Prisma.EmailIntegrationFindManyArgs> = z.object({
@@ -2817,7 +2824,7 @@ export const EmailIntegrationFindManyArgsSchema: z.ZodType<Prisma.EmailIntegrati
   cursor: EmailIntegrationWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: EmailIntegrationScalarFieldEnumSchema.array().optional(),
+  distinct: z.union([ EmailIntegrationScalarFieldEnumSchema,EmailIntegrationScalarFieldEnumSchema.array() ]).optional(),
 }).strict()
 
 export const EmailIntegrationAggregateArgsSchema: z.ZodType<Prisma.EmailIntegrationAggregateArgs> = z.object({
@@ -2975,7 +2982,7 @@ export const RunDeleteManyArgsSchema: z.ZodType<Prisma.RunDeleteManyArgs> = z.ob
 export const SlackIntegrationCreateArgsSchema: z.ZodType<Prisma.SlackIntegrationCreateArgs> = z.object({
   select: SlackIntegrationSelectSchema.optional(),
   include: SlackIntegrationIncludeSchema.optional(),
-  data: z.union([ SlackIntegrationCreateInputSchema,SlackIntegrationUncheckedCreateInputSchema ]),
+  data: z.union([ SlackIntegrationCreateInputSchema,SlackIntegrationUncheckedCreateInputSchema ]).optional(),
 }).strict()
 
 export const SlackIntegrationUpsertArgsSchema: z.ZodType<Prisma.SlackIntegrationUpsertArgs> = z.object({
@@ -3016,7 +3023,7 @@ export const SlackIntegrationDeleteManyArgsSchema: z.ZodType<Prisma.SlackIntegra
 export const EmailIntegrationCreateArgsSchema: z.ZodType<Prisma.EmailIntegrationCreateArgs> = z.object({
   select: EmailIntegrationSelectSchema.optional(),
   include: EmailIntegrationIncludeSchema.optional(),
-  data: z.union([ EmailIntegrationCreateInputSchema,EmailIntegrationUncheckedCreateInputSchema ]),
+  data: z.union([ EmailIntegrationCreateInputSchema,EmailIntegrationUncheckedCreateInputSchema ]).optional(),
 }).strict()
 
 export const EmailIntegrationUpsertArgsSchema: z.ZodType<Prisma.EmailIntegrationUpsertArgs> = z.object({

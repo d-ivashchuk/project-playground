@@ -86,7 +86,7 @@ export const apiJobs = c.router({
     method: 'DELETE',
     path: '/projects/:id',
     responses: {
-      200: z.string,
+      200: z.string(),
     },
     body: null,
     summary: 'Delete project by id',
