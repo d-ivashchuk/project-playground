@@ -109,7 +109,7 @@ export const apiJobs = c.router({
     method: 'GET',
     path: '/jobs/test',
     responses: {
-      200: z.string,
+      200: z.string(),
     },
     summary: 'test',
   },
@@ -117,7 +117,7 @@ export const apiJobs = c.router({
     method: 'DELETE',
     path: '/jobs/:id',
     responses: {
-      200: z.string,
+      200: z.string(),
     },
     body: null,
     summary: 'Delete job by id',
