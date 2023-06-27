@@ -5,11 +5,12 @@ import { Job, Run } from '@prisma/client';
 import { v2 as cloudinary } from 'cloudinary';
 import { SHA256 } from 'crypto-js';
 import { Readable } from 'stream';
-import { PNG } from 'pngjs';
-import pixelmatch from 'pixelmatch';
 import axios from 'axios';
 import { NotificationsService } from '../notifications/notifications.service';
 import jimp from 'jimp';
+import { url } from 'inspector';
+import { async, buffer } from 'rxjs';
+import { string, boolean, number } from 'zod';
 
 @Injectable()
 export class VisualService implements OnModuleInit {
@@ -57,6 +58,12 @@ export class VisualService implements OnModuleInit {
     await this.browser.close();
   }
 
+  async sleep(ms: number) {
+    new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
+
   async getJobScreenshot(job: Job) {
     try {
       await this.initBrowser();
@@ -78,6 +85,7 @@ export class VisualService implements OnModuleInit {
       for (let attempt = 0; attempt < 3; attempt++) {
         try {
           await page.goto(job.url);
+          this.sleep(5000);
           buffer = await page.screenshot({ fullPage: true });
           break; // If screenshot is successful, break the loop
         } catch (error) {
