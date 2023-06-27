@@ -9,6 +9,7 @@ import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
 import axios from 'axios';
 import { NotificationsService } from '../notifications/notifications.service';
+import jimp from 'jimp';
 
 @Injectable()
 export class VisualService implements OnModuleInit {
@@ -251,38 +252,35 @@ export class VisualService implements OnModuleInit {
     newImageBuffer: Buffer;
     threshold: number | null;
   }): Promise<{ diffUrl: string; diffPercentage: number; diffPixels: number }> {
-    this.logger.log(`"compareImages" runs with threshold: ${threshold}`);
+    try {
+      this.logger.log(`"compareImages" runs with threshold: ${threshold}`);
 
-    // Convert the buffers to PNG images
-    const img1 = PNG.sync.read(baselineImageBuffer);
-    const img2 = PNG.sync.read(newImageBuffer);
+      const jImage1 = await jimp.read(baselineImageBuffer);
+      const jImage2 = await jimp.read(newImageBuffer);
+      const jDiff = jimp.diff(jImage1, jImage2, threshold || 0.01);
 
-    // Create a new PNG to hold the diff image
-    const { width, height } = img1;
-    const diff = new PNG({ width, height });
+      const totalPixels = jImage1.bitmap.width * jImage2.bitmap.height;
+      const diffPixels = Math.round(jDiff.percent * totalPixels);
 
-    // Compare the images
-    const diffPixels = pixelmatch(
-      img1.data,
-      img2.data,
-      diff.data,
-      width,
-      height,
-      { threshold: threshold || 0.1 }
-    );
+      const buffer: Buffer = await new Promise((resolve, reject) => {
+        jDiff.image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
+          if (err) {
+            this.logger.error(`"compareImages" error: ${err}`);
+            reject(err);
+          }
+          resolve(buffer);
+        });
+      });
 
-    // Calculate the percentage of different pixels
-    const totalPixels = width * height;
-    const diffPercentage = (diffPixels / totalPixels) * 100;
+      // Upload the diff image to Cloudinary
+      const diffUrl = await this.uploadImageToCloudinary({ buffer });
 
-    // Convert the diff image back to a buffer
-    const buffer = PNG.sync.write(diff);
-
-    // Upload the diff image to Cloudinary
-    const diffUrl = await this.uploadImageToCloudinary({ buffer });
-
-    // Return the diff image buffer and diff percentage
-    return { diffPercentage, diffPixels, diffUrl };
+      // Return the diff image buffer and diff percentage
+      return { diffPercentage: jDiff.percent, diffPixels, diffUrl };
+    } catch (error) {
+      this.logger.error(`"compareImages" error: ${error}`);
+      throw error;
+    }
   }
   async downloadImage(url: string): Promise<Buffer> {
     this.logger.log(`"downloadImage" runs for url: ${url}`);
