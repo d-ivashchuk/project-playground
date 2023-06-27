@@ -59,7 +59,7 @@ export class VisualService implements OnModuleInit {
   }
 
   async sleep(ms: number) {
-    new Promise((resolve) => {
+    return new Promise((resolve) => {
       setTimeout(resolve, ms);
     });
   }
@@ -86,7 +86,7 @@ export class VisualService implements OnModuleInit {
         try {
           await page.goto(job.url);
           this.logger.log(`"getJobScreenshot" page.goto runs sleep 5000 start`);
-          this.sleep(5000);
+          await this.sleep(5000);
           this.logger.log(`"getJobScreenshot" page.goto runs sleep 5000 end`);
           buffer = await page.screenshot({ fullPage: true });
           break; // If screenshot is successful, break the loop
