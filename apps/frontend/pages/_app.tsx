@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import NextApp, { AppProps, AppContext } from 'next/app';
 import { getCookie, setCookie } from 'cookies-next';
 import Head from 'next/head';
@@ -8,11 +8,52 @@ import {
   ColorSchemeProvider,
 } from '@mantine/core';
 
+import posthog from 'posthog-js';
+import { PostHogProvider } from 'posthog-js/react';
+import { useRouter } from 'next/router';
+import { useUser } from '@clerk/nextjs';
+
+// Check that PostHog is client-side (used to handle Next.js SSR)
+if (typeof window !== 'undefined') {
+  posthog.init(
+    process.env.NEXT_PUBLIC_POSTHOG_KEY ||
+      ('phc_RHzKdYHWtFcl8adbzs08YgYD7mlX4bDbwMP6mQ3UxMM' as string),
+    {
+      api_host:
+        process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+      // Enable debug mode in development
+      loaded: (posthog) => {
+        if (process.env.NODE_ENV === 'development') posthog.debug();
+      },
+    }
+  );
+}
+
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
   const [colorScheme, setColorScheme] = useState<ColorScheme>(
     props.colorScheme
   );
+
+  const { user, isLoaded, isSignedIn } = useUser();
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      posthog.identify(user?.id as string);
+    }
+  }, [isLoaded, isSignedIn]);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    // Track page views
+    const handleRouteChange = () => posthog?.capture('$pageview');
+    router.events.on('routeChangeComplete', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, []);
 
   const toggleColorScheme = (value?: ColorScheme) => {
     const nextColorScheme =
@@ -33,18 +74,20 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
-      <ColorSchemeProvider
-        colorScheme={colorScheme}
-        toggleColorScheme={toggleColorScheme}
-      >
-        <MantineProvider
-          theme={{ colorScheme }}
-          withGlobalStyles
-          withNormalizeCSS
+      <PostHogProvider client={posthog}>
+        <ColorSchemeProvider
+          colorScheme={colorScheme}
+          toggleColorScheme={toggleColorScheme}
         >
-          <Component {...pageProps} />
-        </MantineProvider>
-      </ColorSchemeProvider>
+          <MantineProvider
+            theme={{ colorScheme }}
+            withGlobalStyles
+            withNormalizeCSS
+          >
+            <Component {...pageProps} />
+          </MantineProvider>
+        </ColorSchemeProvider>
+      </PostHogProvider>
     </>
   );
 }

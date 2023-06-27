@@ -73,6 +73,7 @@ specifiers:
   pixelmatch: ^5.3.0
   playwright: ^1.34.0
   pngjs: ^7.0.0
+  posthog-js: ^1.68.4
   prettier: ^2.6.2
   prisma: ^4.14.1
   react: 18.2.0
@@ -127,6 +128,7 @@ dependencies:
   pixelmatch: 5.3.0
   playwright: 1.35.1
   pngjs: 7.0.0
+  posthog-js: 1.68.4
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-icons: 4.10.1_react@18.2.0
@@ -6999,6 +7001,10 @@ packages:
       bser: 2.1.1
     dev: true
 
+  /fflate/0.4.8:
+    resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
+    dev: false
+
   /figures/3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
     engines: {node: '>=8'}
@@ -10290,6 +10296,12 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: true
+
+  /posthog-js/1.68.4:
+    resolution: {integrity: sha512-rHk4uk99nvWiDTU7P2mFdEfzFR6km0hvOpCR3tm/+F7kCJKs7QDkMblOZZHZultxM4wSNyB4neeohmnHjKYUhQ==}
+    dependencies:
+      fflate: 0.4.8
+    dev: false
 
   /prelude-ls/1.1.2:
     resolution: {integrity: sha512-ESF23V4SKG6lVSGZgYNpbsiaAkdab6ZgOxe52p7+Kid3W3u3bxR4Vfd/o21dmN7jSt0IwgZ4v5MUd26FEtXE9w==}
