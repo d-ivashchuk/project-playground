@@ -85,7 +85,9 @@ export class VisualService implements OnModuleInit {
       for (let attempt = 0; attempt < 3; attempt++) {
         try {
           await page.goto(job.url);
+          this.logger.log(`"getJobScreenshot" page.goto runs sleep 5000 start`);
           this.sleep(5000);
+          this.logger.log(`"getJobScreenshot" page.goto runs sleep 5000 end`);
           buffer = await page.screenshot({ fullPage: true });
           break; // If screenshot is successful, break the loop
         } catch (error) {
