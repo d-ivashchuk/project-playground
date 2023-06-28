@@ -15,6 +15,7 @@ import { useUser } from '@clerk/nextjs';
 
 // Check that PostHog is client-side (used to handle Next.js SSR)
 if (typeof window !== 'undefined') {
+  console.log('posthog init');
   posthog.init(
     process.env.NEXT_PUBLIC_POSTHOG_KEY ||
       ('phc_RHzKdYHWtFcl8adbzs08YgYD7mlX4bDbwMP6mQ3UxMM' as string),
@@ -39,6 +40,8 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
+      console.log('posthog u');
+
       posthog.identify(user?.id as string);
     }
   }, [isLoaded, isSignedIn]);
