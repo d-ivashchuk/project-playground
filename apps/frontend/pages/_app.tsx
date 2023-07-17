@@ -28,6 +28,8 @@ if (typeof window !== 'undefined') {
       },
     }
   );
+} else {
+  console.log('shit');
 }
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
